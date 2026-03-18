@@ -1,10 +1,13 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api\V1;
 
+use App\Http\Controllers\Controller;
+use App\Http\Requests\GroupFormRequest;
+use App\Models\Group;
 use Illuminate\Http\Request;
 
-class ProfileController extends Controller
+class GroupController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -20,13 +23,18 @@ class ProfileController extends Controller
     public function create()
     {
         //
+        return view('group.createGroup');
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(GroupFormRequest $request)
     {
+        if ($req)
+        $group = Group::create(['name' => $request->name,
+            'description' => $request->description]);
+
         //
     }
 

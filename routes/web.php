@@ -1,9 +1,10 @@
 <?php
 
-use App\Http\Controllers\ResetPasswordController;
+use App\Http\Controllers\Api\AuthentificationController;
+use App\Http\Controllers\Api\V1\RegisterController;
+use App\Http\Controllers\Api\V1\ResetPasswordController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AuthentificationController;
-use App\Http\Controllers\RegisterController;
+
 Route::get('/login', function () {
     return view('auth.login');
 })->name('login');
@@ -31,5 +32,5 @@ Route::middleware('guest')->group(function () {
     Route::post('/reset-password', [ResetPasswordController::class, 'store'])->name('password.update');
 });
 
-Route::view('/test','globalDashboard');
+Route::view('/test','group.createGroup');
 route::post('/logout',[ AuthentificationController::class,'logout'])->name('logout');
