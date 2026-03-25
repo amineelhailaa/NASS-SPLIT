@@ -16,7 +16,6 @@ return new class extends Migration
             $table->foreignId('group_id')->constrained('groups')->cascadeOnDelete();
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
             $table->enum('role', ['owner', 'member'])->default('member');
-            $table->timestamp('joined_at')->nullable();
             $table->timestamp('left_at')->nullable();
             $table->decimal('balance', 12, 2)->default(0);
             $table->string('status')->default('active');

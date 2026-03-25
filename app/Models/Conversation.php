@@ -8,7 +8,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Conversation extends Model
 {
-    //
+    protected $fillable = [
+        'group_id',
+    ];
 
     public function group(): BelongsTo
     {

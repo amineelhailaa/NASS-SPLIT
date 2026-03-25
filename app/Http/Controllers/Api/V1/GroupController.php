@@ -22,7 +22,7 @@ class GroupController extends Controller
 
         if ($request->filled('search')) {
             $searchTerm = $request->input('search');
-            $query->where('name', 'like', "%{$searchTerm}%");
+            $query->where('name', 'like', "%$searchTerm%");
         }
         //sort
         $sortBy = in_array($request->input('sort_by'), ['created_at', 'name']) ? $request->input('sort_by') : 'created_at';
@@ -32,38 +32,17 @@ class GroupController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-        return view('group.createGroup');
-    }
-
-    /**
      * Store a newly created resource in storage.
      */
     public function store(GroupFormRequest $request)
     {
-        if ($req)
-        $group = Group::create(['name' => $request->name,
-            'description' => $request->description]);
 
-        //
     }
 
     /**
      * Display the specified resource.
      */
     public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
     {
         //
     }

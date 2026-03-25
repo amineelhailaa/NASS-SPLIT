@@ -9,6 +9,15 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Membership extends Model
 {
+    protected $fillable = [
+        'group_id',
+        'user_id',
+        'role',
+        'left_at',
+        'balance',
+        'status',
+    ];
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class,'user_id');

@@ -11,7 +11,7 @@ class GroupFormRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -23,8 +23,8 @@ class GroupFormRequest extends FormRequest
     {
         return [
             'name' => 'required',
-            'description' => 'required',
-            'avatar' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'description' => 'required|string|max:300',
+            'avatar' => 'required|image',
         ];
     }
 }

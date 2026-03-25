@@ -21,7 +21,6 @@ return new class extends Migration
             $table->string('provider_name');
             $table->integer('provider_id');
             $table->boolean('ban')->default(false);
-            $table->unsignedInteger('reputation')->default(0);
             $table->rememberToken();
             $table->timestamps();
         });

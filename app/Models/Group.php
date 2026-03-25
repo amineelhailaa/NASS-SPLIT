@@ -8,9 +8,12 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 class Group extends Model
 {
     //
-    protected $fillable = ['name',
+    protected $fillable = [
+        'name',
+        'avatar',
         'description',
-        'avatar'
+        'invitation_code',
+        'status',
     ];
 
 
@@ -32,4 +35,3 @@ class Group extends Model
 
 
 }
-

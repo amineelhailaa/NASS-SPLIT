@@ -8,7 +8,15 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Expense extends Model
 {
-    //
+    protected $fillable = [
+        'group_id',
+        'payer_id',
+        'category_id',
+        'title',
+        'description',
+        'amount',
+    ];
+
     public function payer(): BelongsTo
     {
         return $this->belongsTo(Membership::class,'payer_id');
