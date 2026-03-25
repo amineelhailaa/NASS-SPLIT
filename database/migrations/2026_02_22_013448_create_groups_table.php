@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('avatar')->nullable();
             $table->string('description')->nullable();
             $table->integer('invitation_code');
+            $table->string('status')->default('active');
             $table->timestamps();
         });
     }

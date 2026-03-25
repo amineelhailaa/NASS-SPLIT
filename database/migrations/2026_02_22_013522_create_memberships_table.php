@@ -11,15 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('groupmembers', function (Blueprint $table) {
+        Schema::create('memberships', function (Blueprint $table) {
             $table->id();
-            $table->integer('group_id');
-            $table->integer('user_id');
-            $table->enum('role',['member','admin'])->default('member');
+            $table->foreignId('group_id')->constrained('groups')->cascadeOnDelete();
+            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
+            $table->enum('role', ['owner', 'member'])->default('member');
+            $table->timestamp('joined_at')->nullable();
+            $table->timestamp('left_at')->nullable();
+            $table->decimal('balance', 12, 2)->default(0);
+            $table->string('status')->default('active');
             $table->timestamps();
-            $table->foreign('group_id')->references('id')->on('groups')->cascadeOnDelete();
-            $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete();
-            $table->unique(['group_id','user_id']);
+
+            $table->unique(['group_id', 'user_id']);
         });
     }
 
@@ -28,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('groupmembers');
+        Schema::dropIfExists('memberships');
     }
 };

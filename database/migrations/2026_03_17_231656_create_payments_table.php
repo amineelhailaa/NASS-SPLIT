@@ -11,8 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('paiements', function (Blueprint $table) {
+        Schema::create('payments', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('creditor_id')->constrained('memberships')->cascadeOnDelete();
+            $table->foreignId('debtor_id')->constrained('memberships')->cascadeOnDelete();
+            $table->decimal('amount', 12, 2);
+            $table->string('status')->default('pending');
             $table->timestamps();
         });
     }
@@ -22,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('paiements');
+        Schema::dropIfExists('payments');
     }
 };
