@@ -36,6 +36,15 @@ class GroupController extends Controller
      */
     public function store(GroupFormRequest $request)
     {
+        $path = null;
+        if ($request->hasFile('avatar')) {
+            $path = $request->file('avatar')->store('avatars', 'public');
+        }
+        Group::create([
+            'name' => $request->name,
+            'description' => $request->description,
+            'avatar' =>$path,
+        ]);
 
     }
 
