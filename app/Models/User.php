@@ -4,13 +4,17 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, HasApiTokens;
 
     /**
      * The attributes that are mass assignable.
@@ -21,6 +25,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'provider_name',
+        'provider_id',
     ];
 
     /**
@@ -45,4 +51,43 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function memberships(): HasMany
+    {
+        return $this->hasMany(Membership::class,'user_id');
+    }
+
+    //relationships
+    public function groups(): BelongsToMany
+    {
+        return $this->belongsToMany(Group::class,'memberships')
+            ->withPivot('role')
+            ->withTimestamps();
+    }
+
+    public function conversations(): HasManyThrough
+    {
+        return $this->hasManyThrough(
+            Conversation::class,
+            Membership::class,
+            'user_id', //memberships
+            'group_id', //fk final table
+            'id', //actual table
+            'group_id' //fk memberships
+        );
+    }
+
+    public function messages(): HasMany
+    {
+        return $this->hasMany(Message::class,'user_id');
+    }
+
+
+    public function admin(): HasOne
+    {
+        return $this->hasOne(Admin::class);
+    }
+
+
+
 }
