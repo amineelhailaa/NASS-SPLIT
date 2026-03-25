@@ -13,6 +13,10 @@ return new class extends Migration
     {
         Schema::create('splits', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('expense_id')->constrained('expenses')->cascadeOnDelete();
+            $table->foreignId('debtor_id')->constrained('memberships')->cascadeOnDelete();
+            $table->decimal('amount', 12, 2);
+            $table->enum('status',['pending','payed'])->default('pending');
             $table->timestamps();
         });
     }
