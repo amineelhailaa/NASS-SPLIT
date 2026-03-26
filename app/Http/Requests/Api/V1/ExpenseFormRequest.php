@@ -28,7 +28,7 @@ class ExpenseFormRequest extends FormRequest
             'category_id' => 'nullable|', //exists:categories,id adding it after
             'date' => 'required|date',
             'payer_id' => 'required|exists:memberships,id',
-            'split_strategy' => 'required|in_array:equal,percentage,fixed',
+            'split_strategy' => 'required|in:equal,percentage,fixed',
             'participants' => ['required', 'array', 'min:1'],
             'participants.*' => ['required', 'array'],
             'participants.*.membership_id' => ['required', 'integer','exists:memberships,id'],

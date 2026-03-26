@@ -12,7 +12,8 @@ class StrategyManagerService
      * Create a new class instance.
      */
 
-    public function dataToInsert($splitStrategy, $amount, $participants){
+    public function dataToInsert($splitStrategy, $amount, $participants): array
+    {
 
         switch ($splitStrategy){
 
