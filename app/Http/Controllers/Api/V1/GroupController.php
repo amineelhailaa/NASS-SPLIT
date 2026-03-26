@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\GroupFormRequest;
 use App\Models\Group;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class GroupController extends Controller
 {
@@ -36,16 +37,22 @@ class GroupController extends Controller
      */
     public function store(GroupFormRequest $request)
     {
+        $user = $request->user();
         $path = null;
         if ($request->hasFile('avatar')) {
             $path = $request->file('avatar')->store('avatars', 'public');
         }
-        Group::create([
+       $group =  $user->groups()->create([ // should verify if i can createw grp with that relation !
             'name' => $request->name,
             'description' => $request->description,
             'avatar' =>$path,
         ]);
+        $user->groups()->updateExistingPivot($group->id,[
+            'role' => 'owner'
+        ]);
 
+
+        return $this->createdResponse($group);
     }
 
     /**
@@ -53,15 +60,30 @@ class GroupController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $group = Group::findOrFail($id);
+        Gate::authorize('member',$group);
+        return $this->successResponse($group);
+
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(GroupFormRequest $request, string $id)
     {
-        //
+        $group =   Group::findOrFail($id);
+        Gate::authorize('owner',[$group]);
+        $path = $group->avatar;
+        if ($request->hasFile('avatar')) {
+            $path = $request->file('avatar')->store('avatars', 'public');
+        }
+        $group->update([
+            'name' => $request->name,
+            'avatar' => $path,
+            'description' => $request->description
+        ]);
+
+        return $this->successResponse($group,'group updated successuflly !');
     }
 
     /**
@@ -69,6 +91,11 @@ class GroupController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $group = Group::findOrFail($id);
+        Gate::authorize('owner',[$group]);
+        $group->delete();
+       return $this->successResponse([],'group deleted');
     }
+
+
 }

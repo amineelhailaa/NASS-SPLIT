@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->string('provider_name');
+            $table->string('provider_name'); //socialite
             $table->integer('provider_id');
             $table->boolean('ban')->default(false);
             $table->rememberToken();

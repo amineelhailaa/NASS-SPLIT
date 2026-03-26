@@ -24,7 +24,7 @@ class GroupFormRequest extends FormRequest
         return [
             'name' => 'required',
             'description' => 'required|string|max:300',
-            'avatar' => 'required|image',
+            'avatar' => 'nullable|image',
         ];
     }
 }

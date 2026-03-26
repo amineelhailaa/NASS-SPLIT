@@ -2,8 +2,10 @@
 
 namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Random\RandomException;
 
 class Group extends Model
@@ -46,6 +48,17 @@ class Group extends Model
     public function conversation(): HasOne
     {
         return $this->hasOne(Conversation::class,'group_id');
+    }
+
+
+    public function ownerMembership(): HasOne
+    {
+        return $this->hasOne(Membership::class,'group_id')->where('role','owner');
+    }
+
+    public function members(): HasMany
+    {
+        return $this->hasMany(Membership::class,'group_id');
     }
 
 
