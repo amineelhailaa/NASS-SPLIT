@@ -42,7 +42,7 @@ class ExpenseController extends Controller
         if ($request->hasFile('attachments')) {
             foreach ($request->file('attachments') as $file) {
 
-                $path = $file->store('', 'public_direct');
+                $path = $file->store('', 'public');
 
                 $expense->attachments()->create([
                     'path'=> $path,
