@@ -1,7 +1,7 @@
 <?php
 
-use App\Http\Controllers\Api\AuthentificationController;
-use App\Http\Controllers\Api\V1\SocialAuthController;
+use App\Http\Controllers\Api\Auth\AuthentificationController;
+use App\Http\Controllers\Api\Auth\SocialAuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 

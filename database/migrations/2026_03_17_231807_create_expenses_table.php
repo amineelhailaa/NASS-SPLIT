@@ -17,7 +17,6 @@ return new class extends Migration
             $table->foreignId('payer_id')->constrained('memberships')->cascadeOnDelete();
             $table->foreignId('category_id')->nullable()->constrained('categories')->nullOnDelete();
             $table->string('title');
-            $table->string('description');
             $table->date('date');
             $table->decimal('amount', 12, 2);
             $table->timestamps();

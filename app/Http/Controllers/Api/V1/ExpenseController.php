@@ -7,6 +7,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\ExpenseFormRequest;
 use App\Models\Expense;
 use App\Models\Group;
+use App\Models\Split;
+use App\Services\StrategyManagerService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 
@@ -26,18 +28,31 @@ class ExpenseController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(ExpenseFormRequest $request,Group $group)
+    public function store(ExpenseFormRequest $request,Group $group,StrategyManagerService $service)
     {
         Gate::authorize('member',$group);
         $user = $request->user();
-        $group->expenses()->create([
+       $expense = $group->expenses()->create([
             'payer_id' => $request->payer_id,
             'category_id' => $request->category_id,
             'title' => $request->title,
-            'description' => $request->description,
+            'date'=> $request->date,
             'amount' => $request->amount
         ]);
+        $splits = $service->dataToInsert($request->split_strategy,$request->amount,$request->participants);
+        //now im looking for a function to insert collection without looping
+        $now = now();
+        $splits = array_map(fn($item)=>[
+            ...$item,'expense_id'=> $expense->id,
+            'created_at'=> $now,
+            'updated_at'=>$now
+        ],$splits);
+        Split::insert($splits);
+        return $this->createdResponse($expense,'created successfully');
     }
+
+
+
 
     /**
      * Display the specified resource.
