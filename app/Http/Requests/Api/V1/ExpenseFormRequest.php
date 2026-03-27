@@ -29,6 +29,8 @@ class ExpenseFormRequest extends FormRequest
             'date' => 'required|date',
             'payer_id' => 'required|exists:memberships,id',
             'split_strategy' => 'required|in:equal,percentage,fixed',
+            'attachments' => ['nullable', 'array'],
+            'attachments.*' => ['file', 'max:5120'], //images or what ever
             'participants' => ['required', 'array', 'min:1'],
             'participants.*' => ['required', 'array'],
             'participants.*.membership_id' => ['required', 'integer','exists:memberships,id'],

@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class Expense extends Model
 {
@@ -32,5 +33,11 @@ class Expense extends Model
     public function attachment(): HasOne
     {
         return $this->hasOne(Attachment::class,'expense_id');
+    }
+
+    //files
+    public function attachments(): MorphMany
+    {
+        return $this->morphMany(Attachment::class,'attachable');
     }
 }

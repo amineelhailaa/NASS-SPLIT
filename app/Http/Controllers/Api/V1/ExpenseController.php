@@ -39,6 +39,18 @@ class ExpenseController extends Controller
             'date'=> $request->date,
             'amount' => $request->amount
         ]);
+        if ($request->hasFile('attachments')) {
+            foreach ($request->file('attachments') as $file) {
+
+                $path = $file->store('', 'public_direct');
+
+                $expense->attachments()->create([
+                    'path'=> $path,
+                    'file_type'=> $file->isImage ? 'image' : 'file',
+                    'file_name'=> $file->getClientOriginalName()
+                ]);
+            }
+        }
         $splits = $service->dataToInsert($request->split_strategy,$request->amount,$request->participants);
         //now im looking for a function to insert collection without looping
         $now = now();
