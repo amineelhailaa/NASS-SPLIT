@@ -37,16 +37,21 @@ class GroupController extends Controller
      */
     public function store(GroupFormRequest $request)
     {
-        $user = $request->user();
-        $path = null;
-        if ($request->hasFile('avatar')) {
-            $path = $request->file('avatar')->store('avatars', 'public');
-        }
+       $user = $request->user();
        $group =  $user->groups()->create([ // should verify if i can createw grp with that relation !
             'name' => $request->name,
             'description' => $request->description,
-            'avatar' =>$path,
         ]);
+        if ($request->hasFile('avatar')) {
+            $file = $request->file('avatar');
+            $path = $file->store('avatars', 'public');
+            $group->avatar?->create([
+                'path'=>$path,
+                'file_name' => $file->getClientOriginalName(),
+                'file_type' => $file->isImage() ? 'image':'file'
+            ]);
+        }
+
         $user->groups()->updateExistingPivot($group->id,[
             'role' => 'owner'
         ]);
@@ -73,15 +78,19 @@ class GroupController extends Controller
     {
         $group =   Group::findOrFail($id);
         Gate::authorize('owner',[$group]);
-        $path = $group->avatar;
-        if ($request->hasFile('avatar')) {
-            $path = $request->file('avatar')->store('avatars', 'public');
-        }
         $group->update([
             'name' => $request->name,
-            'avatar' => $path,
             'description' => $request->description
         ]);
+        if ($request->hasFile('avatar')) {
+            $file = $request->file('avatar');
+            $path = $file->store('avatars', 'public');
+            $group->avatar?->updateOrCreate([
+                'path'=>$path,
+                'file_name' => $file->getClientOriginalName(),
+                'file_type' => $file->isImage() ? 'image':'file'
+            ]);
+        }
 
         return $this->successResponse($group,'group updated successuflly !');
     }

@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Random\RandomException;
 
 class Group extends Model
@@ -13,7 +14,6 @@ class Group extends Model
     //
     protected $fillable = [
         'name',
-        'avatar',
         'description',
         'invitation_code',
         'status',
@@ -50,7 +50,10 @@ class Group extends Model
         return $this->hasOne(Conversation::class,'group_id');
     }
 
-
+    public function avatar(): MorphOne
+    {
+        return $this->morphOne(Attachment::class,'attachable');
+    }
     public function ownerMembership(): HasOne
     {
         return $this->hasOne(Membership::class,'group_id')->where('role','owner');
