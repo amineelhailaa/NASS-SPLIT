@@ -19,7 +19,8 @@ class Expense extends Model
         'amount',
     ];
 
-    public function payer(): BelongsTo
+
+    public function payer()
     {
         return $this->belongsTo(Membership::class,'payer_id');
     }
@@ -29,12 +30,10 @@ class Expense extends Model
     {
         return $this->belongsTo(Group::class,'group_id');
     }
-
-    public function attachment(): HasOne
+    public function category(): BelongsTo
     {
-        return $this->hasOne(Attachment::class,'expense_id');
+      return  $this->belongsTo(Category::class,'category_id');
     }
-
     //files
     public function attachments(): MorphMany
     {

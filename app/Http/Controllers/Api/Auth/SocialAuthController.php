@@ -19,13 +19,11 @@ class SocialAuthController extends Controller
     }
 
     public function handleCallback($provider){
-        try {
+
             $socialUser = Socialite::driver($provider)
                 ->stateless()
                 ->user();
-        } catch (\Exception $exception){
-            return $this->errorResponse('auth failed',401);
-        }
+
         $user = User::updateOrCreate([
             //find array ( include in the second for create )
             'email' => $socialUser->getEmail(),
@@ -35,10 +33,10 @@ class SocialAuthController extends Controller
             'provider_name' => $provider,
             // password stay null
         ]);
+        Auth::login($user, true);
 
-        $tokenData = $this->createApiToken($user);
-        return $this
-            ->successResponse($tokenData, "Logged in via {$provider}!");
+        request()->session()->regenerate();
+        return $this->redirect(config('app.frontend_url').'/home');
 
     }
 
