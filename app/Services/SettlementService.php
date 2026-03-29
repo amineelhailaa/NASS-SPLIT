@@ -14,7 +14,7 @@ class SettlementService
         //
     }
 
-    public function forGroup(Group $group)
+    public function forGroup(Group $group): array
     {
         $memberships = $group->members(); //memberships :)
         $netBalances = [];
@@ -27,7 +27,7 @@ class SettlementService
         return $this->buildTransactions($netBalances);
     }
 
-    public function buildTransactions($netBalances)
+    public function buildTransactions($netBalances): array
     {
         $creditors = [];
         $debitors = [];

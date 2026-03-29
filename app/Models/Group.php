@@ -32,8 +32,11 @@ class Group extends Model
 
     protected static function booted()
     {
-        static::creating(function (Group $group) {
+        static::creating(function (Group $group) { //while creating
             $group->generateCodeInvitation();
+        });
+        static::created(function (Group $group){
+            $group->conversation()->create();
         });
     }
 

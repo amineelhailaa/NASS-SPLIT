@@ -55,8 +55,6 @@ class GroupController extends Controller
         $user->groups()->updateExistingPivot($group->id,[
             'role' => 'owner'
         ]);
-
-
         return $this->createdResponse($group);
     }
 
