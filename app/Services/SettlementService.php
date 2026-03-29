@@ -48,9 +48,39 @@ class SettlementService
 
 
         $transactions = [];
-        while (!empty($creditors)){
+        while (!empty($creditors)) {
+            $creditors = collect($creditors)
+                ->sortByDesc('amount')
+                ->values(); //reset keys after sorting
+            $debitors = collect($debitors)
+                ->sortByDesc('amount')
+                ->values();
 
+            $creditor = $creditors->shift();
+            $debitor = $debitors->shift();
+
+            //reset to array =>
+            $creditors = $creditors->all();
+            $debitors = $debitors->all();
+
+            $amountOfTransaction = min($creditor['amount'], $debitor['amount']);
+            $transactions[] = [
+                'debtor_id' => $debitor['membership_id'],
+                'creditor_id' => $creditor['membership_id'],
+                'amount' => $amountOfTransaction / 100
+            ];
+
+            $creditor['amount'] -= $amountOfTransaction;
+            $debitor['amount'] -= $amountOfTransaction;
+
+            if ($creditor['amount'] > 0) {
+                $creditors[] = $creditor;
+            }
+            if ($debitor['amount'] > 0) {
+                $debitors[] = $debitor;
+            }
         }
+        return $transactions;
     }
 
 }
