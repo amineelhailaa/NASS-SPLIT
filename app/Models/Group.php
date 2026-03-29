@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Models;
+
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -21,12 +22,14 @@ class Group extends Model
 
     //generate code
 
-    public function generateCodeInvitation():void {
-        do{
-            $inv_code = random_int(111111,999999);
-        } while (Group::where('invitation_code',$inv_code)->exists()); //ihave to add index thing after
+    public function generateCodeInvitation(): void
+    {
+        do {
+            $inv_code = random_int(111111, 999999);
+        } while (Group::where('invitation_code', $inv_code)->exists()); //ihave to add index thing after
         $this->invitation_code = $inv_code;
     }
+
     protected static function booted()
     {
         static::creating(function (Group $group) {
@@ -36,32 +39,33 @@ class Group extends Model
 
     public function invitations(): HasMany
     {
-        return $this->hasMany(Invitation::class,'group_id');
+        return $this->hasMany(Invitation::class, 'group_id');
     }
 
 
     public function expenses(): HasMany
     {
-        return $this->hasMany(Expense::class,'group_id');
+        return $this->hasMany(Expense::class, 'group_id');
     }
 
     public function conversation(): HasOne
     {
-        return $this->hasOne(Conversation::class,'group_id');
+        return $this->hasOne(Conversation::class, 'group_id');
     }
 
     public function avatar(): MorphOne
     {
-        return $this->morphOne(Attachment::class,'attachable');
+        return $this->morphOne(Attachment::class, 'attachable');
     }
+
     public function ownerMembership(): HasOne
     {
-        return $this->hasOne(Membership::class,'group_id')->where('role','owner');
+        return $this->hasOne(Membership::class, 'group_id')->where('role', 'owner');
     }
 
     public function members(): HasMany
     {
-        return $this->hasMany(Membership::class,'group_id');
+        return $this->hasMany(Membership::class, 'group_id');
     }
 
 

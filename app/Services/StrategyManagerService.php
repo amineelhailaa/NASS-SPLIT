@@ -14,7 +14,11 @@ class StrategyManagerService
 
     public function dataToInsert($splitStrategy, $amount, $participants): array
     {
+        return $this->whichStrategy($splitStrategy)->calculate($amount, $participants);
+    }
 
+
+    public function whichStrategy(string $splitStrategy){
         switch ($splitStrategy){
 
             case 'percentage':
@@ -27,8 +31,7 @@ class StrategyManagerService
             default :
                 $strategy = new EqualSplit();
                 break;
-
         }
-        return $strategy->calculate($amount, $participants);
+        return $strategy;
     }
 }

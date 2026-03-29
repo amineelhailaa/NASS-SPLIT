@@ -64,7 +64,7 @@ class User extends Authenticatable
     public function groups(): BelongsToMany
     {
         return $this->belongsToMany(Group::class,'memberships')
-            ->withPivot('role')
+            ->withPivot(['id','role','left_at','status'])
             ->withTimestamps();
     }
 
@@ -88,7 +88,7 @@ class User extends Authenticatable
 
     public function admin(): HasOne
     {
-        return $this->hasOne(Admin::class);
+        return $this->hasOne(Admin::class,'user_id');
     }
 
     public function avatar(): MorphOne
