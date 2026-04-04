@@ -33,7 +33,7 @@ class ExpenseResource extends JsonResource
                         function () {
                             return [
                                 'type' => 'memberships',
-                                'id' =>  $this->payer->id,
+                                'id' => $this->payer->id,
                                 'attributes' => [
                                     'user_id' => $this->payer->user_id,
                                     'name' => $this->when(
