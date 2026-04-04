@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\ApiResponses;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\GroupFormRequest;
+use App\Http\Requests\Api\V1\GroupFormRequest;
 use App\Models\Group;
 use App\Services\GroupService;
 use Illuminate\Http\Request;
