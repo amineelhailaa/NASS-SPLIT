@@ -19,8 +19,8 @@ class Split extends Model
         return $this->belongsTo(Expense::class, 'expense_id');
     }
 
-    public function debor(): BelongsTo
+    public function debtor(): BelongsTo
     {
-        return $this->belongsTo(Membership::class, 'debtor_id');
+        return $this->belongsTo(Membership::class, 'debtor_id')->with('user');
     }
 }
