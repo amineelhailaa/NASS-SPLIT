@@ -15,16 +15,16 @@ class Conversation extends Model
 
     public function group(): BelongsTo
     {
-        return $this->belongsTo(Group::class,'group_id');
+        return $this->belongsTo(Group::class, 'group_id');
     }
 
     public function messages(): HasMany
     {
-        return $this->hasMany(Message::class,'conversation_id');
+        return $this->hasMany(Message::class, 'conversation_id');
     }
 
-    public function lastMessage(): HasOne //forshowing conv list with last message
+    public function lastMessage(): HasOne // forshowing conv list with last message
     {
-        return $this->hasOne(Message::class,'conversation_id')->latestOfMany();
+        return $this->hasOne(Message::class, 'conversation_id')->latestOfMany();
     }
 }
