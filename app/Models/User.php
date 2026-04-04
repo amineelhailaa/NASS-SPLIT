@@ -15,7 +15,7 @@ use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable, HasApiTokens;
+    use HasApiTokens, HasFactory, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -57,14 +57,14 @@ class User extends Authenticatable
 
     public function memberships(): HasMany
     {
-        return $this->hasMany(Membership::class,'user_id');
+        return $this->hasMany(Membership::class, 'user_id');
     }
 
-    //relationships
+    // relationships
     public function groups(): BelongsToMany
     {
-        return $this->belongsToMany(Group::class,'memberships')
-            ->withPivot(['id','role','left_at','status'])
+        return $this->belongsToMany(Group::class, 'memberships')
+            ->withPivot(['id', 'role', 'left_at', 'status'])
             ->withTimestamps();
     }
 
@@ -73,30 +73,26 @@ class User extends Authenticatable
         return $this->hasManyThrough(
             Conversation::class,
             Membership::class,
-            'user_id', //memberships
-            'group_id', //fk final table
-            'id', //actual table
-            'group_id' //fk memberships
+            'user_id', // memberships
+            'group_id', // fk final table
+            'id', // actual table
+            'group_id' // fk memberships
         )
-            ->where('memberships.status','active');
+            ->where('memberships.status', 'active');
     }
 
     public function messages(): HasMany
     {
-        return $this->hasMany(Message::class,'user_id');
+        return $this->hasMany(Message::class, 'user_id');
     }
-
 
     public function admin(): HasOne
     {
-        return $this->hasOne(Admin::class,'user_id');
+        return $this->hasOne(Admin::class, 'user_id');
     }
 
     public function avatar(): MorphOne
     {
-        return $this->morphOne(Attachment::class,'attachable');
+        return $this->morphOne(Attachment::class, 'attachable');
     }
-
-
-
 }
