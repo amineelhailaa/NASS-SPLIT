@@ -24,20 +24,19 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         ResetPassword::createUrlUsing(function (object $notifiable, string $token) {
-            return config('app.frontend_url') . "/password-reset/$token?email={$notifiable->getEmailForPasswordReset()}";
+            return config('app.frontend_url')."/password-reset/$token?email={$notifiable->getEmailForPasswordReset()}";
         });
 
-        //gates:
+        // gates:
         Gate::define('owner', function (User $user, Group $group) {
-            return $user->groups()->whereKey($group->id)->wherePivot('role', 'owner')->wherePivot('status','active')->exists();
+            return $user->groups()->whereKey($group->id)->wherePivot('role', 'owner')->wherePivot('status', 'active')->exists();
         });
-        Gate::define('member', function (User  $user, Group $group) {
-            return $user->groups()->whereKey($group->id)->wherePivot('status','active')->exists();
+        Gate::define('member', function (User $user, Group $group) {
+            return $user->groups()->whereKey($group->id)->wherePivot('status', 'active')->exists();
         });
 
-        Gate::define('admin',function (User $user){
+        Gate::define('admin', function (User $user) {
             return $user->admin()->exists();
         });
     }
-
 }
