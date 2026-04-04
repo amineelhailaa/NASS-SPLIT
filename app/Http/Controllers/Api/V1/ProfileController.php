@@ -2,11 +2,15 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\ApiResponses;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Api\V1\UpdateProfileRequest;
 use Illuminate\Http\Request;
 
 class ProfileController extends Controller
 {
+    use ApiResponses;
+
     /**
      * Display a listing of the resource.
      */
@@ -34,32 +38,38 @@ class ProfileController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
-    {
-        //
-    }
+    public function show(Request $request) {}
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Request $request)
     {
-        //
+        $user = $request->user();
+        return $this->successResponse($user->with('avatar'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UpdateProfileRequest $request, string $id)
     {
-        //
-    }
+        $user = $request->user();
+        $user->update($request->only(['name']));
+        if ($request->hasFile('avatar')) {
+            $file = $request->file('avatar');
+            $path = $file->store('', 'public');
 
+            $user->avatar()->updateOrCreate([], [
+                'path' => $path,
+                'file_type' => 'image',
+                'file_name' => $file->getClientOriginalName(),
+            ]);
+        }
+
+        return $this->successResponse($user);
+    }
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
-    {
-        //
-    }
 }
