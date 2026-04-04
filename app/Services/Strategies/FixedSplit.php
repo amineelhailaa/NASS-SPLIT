@@ -14,9 +14,10 @@ class FixedSplit implements SplitStrategy
         foreach ($participants as $id => $p) {
             $result[] = [
                 'debtor_id' => $p['membership_id'],
-                'amount' => round($p['amount'])
+                'amount' => round($p['amount']),
             ];
         }
+
         return $result;
     }
 }
