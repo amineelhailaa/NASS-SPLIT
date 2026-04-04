@@ -134,8 +134,14 @@ class GroupController extends Controller
 
 
     public function owes(Request $request, Group $group){
+        $user = $request->user();
         Gate::authorize('member',$group);
        $owes =  $this->settlementService->forGroup($group);
+       $membership = $user->memberships()->where('group_id',$group->id)->get();
+
+       $owes = array_values(array_filter($owes,function ($owe) use ($membership) {
+          return in_array($membership->id,[$owe['creditor_id'],$owe['debtor_id']]) ;
+       }));
        return $this->successResponse($owes);
     }
 
