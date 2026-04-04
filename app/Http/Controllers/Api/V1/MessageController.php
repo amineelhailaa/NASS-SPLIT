@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Notification;
 class MessageController extends Controller
 {
     use ApiResponses;
+
     /**
      * Display a listing of the resource.
      */
@@ -26,21 +27,19 @@ class MessageController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(MessageRequest $request,Conversation $conversation)
+    public function store(MessageRequest $request, Conversation $conversation)
     {
         $user = $request->user();
-        abort_unless(
-            $user->conversations()->whereKey($conversation->id)->exists(), 404
-        );
+        abort_unless($user->conversations()->whereKey($conversation->id)->exists(), 404);
 
         $message = $conversation->messages()->create([
             'user_id' => $user->id,
             'message' => $request->input('message'),
         ]);
-        $message->load(['user','conversation.group']);
+        $message->load(['user', 'conversation.group']);
         broadcast(new MessageSent($message))->toOthers();
-        $otherUsers = $conversation->group->users()->whereNot('users.id',$user->id)->get();
-       Notification::send($otherUsers,new NewMessageSentNotification($message));
+        $otherUsers = $conversation->group->users()->whereNot('users.id', $user->id)->get();
+        Notification::send($otherUsers, new NewMessageSentNotification($message));
 
         return $this->createdResponse($message);
     }
@@ -66,9 +65,12 @@ class MessageController extends Controller
      */
     public function destroy(Message $message, Request $request)
     {
-        if($message->user_id !== $request->user()->id) abort(403);
+        if ($message->user_id !== $request->user()->id) {
+            abort(403);
+        }
         $user = $request->user();
         $message->delete();
+
         return $this->noContentResponse();
     }
 }
