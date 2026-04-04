@@ -17,7 +17,7 @@ class PaymentController extends Controller
     public function index(Request $request)
     {
         $user = $request->user();
-        $membershipIds = $user->memberships()->get();
+        $membershipIds = $user->memberships()->pluck('id');
         $payments = Payment::query()
             ->where(function ($q) use ($membershipIds) {
                 $q->whereIn('creditor_id', $membershipIds)
