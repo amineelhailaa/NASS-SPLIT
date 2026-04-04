@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('creditor_id')->constrained('memberships')->cascadeOnDelete();
             $table->foreignId('debtor_id')->constrained('memberships')->cascadeOnDelete();
             $table->decimal('amount', 12, 2);
-            $table->string('status')->default('pending');
+            $table->string('status')->default('paid');
             $table->timestamps();
         });
     }
