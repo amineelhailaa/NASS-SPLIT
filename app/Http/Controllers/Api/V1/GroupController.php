@@ -6,6 +6,7 @@ use App\ApiResponses;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\GroupFormRequest;
 use App\Models\Group;
+use App\Services\GroupService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 
@@ -15,6 +16,11 @@ class GroupController extends Controller
     /**
      * Display a listing of the resource.
      */
+
+    public function __construct(
+       private GroupService $groupService){
+
+    }
     public function index(Request $request)
     {
         $is_admin = $request->user()->admin()->exists();
@@ -37,15 +43,13 @@ class GroupController extends Controller
      */
     public function store(GroupFormRequest $request)
     {
+
        $user = $request->user();
-       $group =  $user->groups()->create([ // should verify if i can createw grp with that relation !
-            'name' => $request->name,
-            'description' => $request->description,
-        ]);
+       $group =  $this->groupService->createGroup($user,$request);
         if ($request->hasFile('avatar')) {
             $file = $request->file('avatar');
             $path = $file->store('avatars', 'public');
-            $group->avatar?->create([
+            $group->avatar()->create([
                 'path'=>$path,
                 'file_name' => $file->getClientOriginalName(),
                 'file_type' => $file->isImage() ? 'image':'file'
@@ -83,7 +87,7 @@ class GroupController extends Controller
         if ($request->hasFile('avatar')) {
             $file = $request->file('avatar');
             $path = $file->store('avatars', 'public');
-            $group->avatar?->updateOrCreate([
+            $group->avatar()->update([
                 'path'=>$path,
                 'file_name' => $file->getClientOriginalName(),
                 'file_type' => $file->isImage() ? 'image':'file'
