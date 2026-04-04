@@ -77,7 +77,8 @@ class User extends Authenticatable
             'group_id', //fk final table
             'id', //actual table
             'group_id' //fk memberships
-        );
+        )
+            ->where('memberships.status','active');
     }
 
     public function messages(): HasMany
