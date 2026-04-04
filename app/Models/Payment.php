@@ -16,11 +16,11 @@ class Payment extends Model
 
     public function creditor(): BelongsTo
     {
-        return $this->belongsTo(Membership::class,'creditor_id');
-    }
-    public function debtor(): BelongsTo
-    {
-        return $this->belongsTo(Membership::class,'debtor_id');
+        return $this->belongsTo(Membership::class, 'creditor_id');
     }
 
+    public function debtor(): BelongsTo
+    {
+        return $this->belongsTo(Membership::class, 'debtor_id');
+    }
 }
