@@ -9,11 +9,13 @@ use Illuminate\Support\Facades\Password;
 
 class ResetPasswordController extends Controller
 {
-    public function index(){
+    public function index()
+    {
         return view('auth.forgetPassword');
     }
 
-    public function resetPassword(Request $request){
+    public function resetPassword(Request $request)
+    {
         $request->validate(['email' => 'required|email']);
         $situation = Password::sendResetLink($request->only('email'));
 
@@ -22,16 +24,14 @@ class ResetPasswordController extends Controller
         }
 
         return back()
-            ->withInput($request->only('email')) //to keep the email like php whenn we used to fill errors in data
-            ->withErrors(['email' => __($situation)]);//make it human
+            ->withInput($request->only('email')) // to keep the email like php whenn we used to fill errors in data
+            ->withErrors(['email' => __($situation)]); // make it human
     }
-
-
 
     /**
      * Show the form for creating a new resource.
      */
-    public function create(Request $request, $token) //this function when the user open the link
+    public function create(Request $request, $token) // this function when the user open the link
     {
         return view('auth.resetPasswordForm', ['token' => $token, 'email' => $request->email]);
     }
@@ -42,16 +42,17 @@ class ResetPasswordController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'email'=>'required|email',
-            'password'=>'required|confirmed|min:8',
-            'token'=>'required',
+            'email' => 'required|email',
+            'password' => 'required|confirmed|min:8',
+            'token' => 'required',
         ]);
-       Password::reset($request->only('email', 'password', 'password_confirmation', 'token'),
-            function ($user, $password){
-            $user->password = Hash::make($password);
-            $user->save();
+        Password::reset($request->only('email', 'password', 'password_confirmation', 'token'),
+            function ($user, $password) {
+                $user->password = Hash::make($password);
+                $user->save();
             });
-       return redirect()->route('login');
+
+        return redirect()->route('login');
     }
 
     /**
