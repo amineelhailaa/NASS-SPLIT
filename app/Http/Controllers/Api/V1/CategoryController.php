@@ -54,7 +54,7 @@ class CategoryController extends Controller
     public function destroy(string $id)
     {
         Gate::authorize('admin');
-        Category::find($id)->delete();
+        Category::findOrFail($id)->delete();
         return $this->noContentResponse();
     }
 }
