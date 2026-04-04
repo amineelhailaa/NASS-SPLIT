@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\ApiResponses;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\ExpenseFormRequest;
-use App\Http\Resources\V1\ExpenseResource;
+use App\Models\Expense;
 use App\Models\Group;
 use App\Models\Split;
 use App\Services\StrategyManagerService;
@@ -24,11 +24,10 @@ class ExpenseController extends Controller
         $group = Group::findOrFail($id);
         Gate::authorize('member', $group);
 
-        return ExpenseResource::collection($this
-            ->successResponse($group
-                ->expenses()
-                ->with('payer,category,attachments')
-                ->get()));
+        return $this->successResponse($group->expenses()
+            ->with(['payer.user', 'category', 'attachments'])
+            ->get()
+        );
     }
 
     /**
@@ -75,7 +74,17 @@ class ExpenseController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $expense = Expense::find($id);
+        Gate::authorize('member', $expense->group);
+
+        return $this->successResponse($expense->with(
+            [
+                'splits.debtor',
+                'payer.user',
+                'attachments',
+                'category',
+            ]
+        ));
     }
 
     /**
@@ -91,6 +100,10 @@ class ExpenseController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $expense = Expense::find($id);
+        Gate::authorize('owner', $expense->group);
+        $expense->delete();
+
+        return $this->noContentResponse();
     }
 }
