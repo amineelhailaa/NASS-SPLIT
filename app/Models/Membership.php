@@ -36,7 +36,7 @@ class Membership extends Model
 
     public function conversation(): HasOne
     {
-        return $this->hasOne(Conversation::class, 'group_id', 'group_id'); //need lockup
+        return $this->hasOne(Conversation::class, 'group_id', 'group_id'); // need lockup
     }
 
     public function splitsAsDebtor(): HasMany
@@ -60,9 +60,8 @@ class Membership extends Model
             Expense::class,
             'payer_id',
             'expense_id',
-            'id', //membership->id
-            'id' //expense.id
+            'id', // membership->id
+            'id' // expense.id
         );
     }
-
 }
