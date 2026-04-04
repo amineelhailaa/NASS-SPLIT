@@ -28,7 +28,6 @@ class PaymentController extends Controller
            //need validation here dont forget it .
         $user->memberships()->whereIn('id',
             [$request->creditor_id,$request->debtor_id])->firstOrFail();
-
          $payment = Payment::create([
                'creditor_id' => $request->creditor_id,
                'debtor_id' => $request->debtor_id,
