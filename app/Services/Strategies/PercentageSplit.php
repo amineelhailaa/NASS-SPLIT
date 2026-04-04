@@ -21,7 +21,6 @@ class PercentageSplit implements SplitStrategy
             ];
         }
 
-
         if ($registerReyals !== $reyals) {
             $diff = $reyals - $registerReyals;
             $result[0]['amount'] += $diff / 100;
@@ -29,5 +28,4 @@ class PercentageSplit implements SplitStrategy
 
         return $result;
     }
-
 }
