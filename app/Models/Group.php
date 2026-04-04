@@ -3,13 +3,10 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
-use Random\RandomException;
 
 class Group extends Model
 {
@@ -21,22 +18,22 @@ class Group extends Model
         'status',
     ];
 
-    //generate code
+    // generate code
 
     public function generateCodeInvitation(): void
     {
         do {
             $inv_code = random_int(111111, 999999);
-        } while (Group::where('invitation_code', $inv_code)->exists()); //ihave to add index thing after
+        } while (Group::where('invitation_code', $inv_code)->exists()); // ihave to add index thing after
         $this->invitation_code = $inv_code;
     }
 
     protected static function booted()
     {
-        static::creating(function (Group $group) { //while creating
+        static::creating(function (Group $group) { // while creating
             $group->generateCodeInvitation();
         });
-        static::created(function (Group $group){
+        static::created(function (Group $group) {
             $group->conversation()->create();
         });
     }
@@ -45,7 +42,6 @@ class Group extends Model
     {
         return $this->hasMany(Invitation::class, 'group_id');
     }
-
 
     public function expenses(): HasMany
     {
@@ -75,11 +71,9 @@ class Group extends Model
     public function users(): BelongsToMany
     {
         return $this->belongsToMany(User::class,
-        'memberships',
-        'group_id','user_id')
-            ->withPivot(['id','role','left_at','status'])
-            ->withTimestamps()->wherePivot('status','active');
+            'memberships',
+            'group_id', 'user_id')
+            ->withPivot(['id', 'role', 'left_at', 'status'])
+            ->withTimestamps()->wherePivot('status', 'active');
     }
-
-
 }
