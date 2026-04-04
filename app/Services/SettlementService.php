@@ -16,7 +16,7 @@ class SettlementService
 
     public function forGroup(Group $group): array
     {
-        $memberships = $group->members()->get(); //memberships :)
+        $memberships = $group->members()->get(); // memberships :)
         $netBalances = [];
         foreach ($memberships as $member) {
             $credits = round($member->splitsAsCreditor()->where('status', 'pending')->sum('amount') * 100);
@@ -36,22 +36,21 @@ class SettlementService
             if ($balance < 0) {
                 $debitors[] = [
                     'membership_id' => $memberId,
-                    'amount' => abs($balance)
+                    'amount' => abs($balance),
                 ];
             } elseif ($balance > 0) {
                 $creditors[] = [
                     'membership_id' => $memberId,
-                    'amount' => $balance
+                    'amount' => $balance,
                 ];
             }
         }
 
-
         $transactions = [];
-        while (!empty($creditors)) {
+        while (! empty($creditors)) {
             $creditors = collect($creditors)
                 ->sortByDesc('amount')
-                ->values(); //reset keys after sorting
+                ->values(); // reset keys after sorting
             $debitors = collect($debitors)
                 ->sortByDesc('amount')
                 ->values();
@@ -59,7 +58,7 @@ class SettlementService
             $creditor = $creditors->shift();
             $debitor = $debitors->shift();
 
-            //reset to array =>
+            // reset to array =>
             $creditors = $creditors->all();
             $debitors = $debitors->all();
 
@@ -67,7 +66,7 @@ class SettlementService
             $transactions[] = [
                 'debtor_id' => $debitor['membership_id'],
                 'creditor_id' => $creditor['membership_id'],
-                'amount' => $amountOfTransaction / 100
+                'amount' => $amountOfTransaction / 100,
             ];
 
             $creditor['amount'] -= $amountOfTransaction;
@@ -80,7 +79,7 @@ class SettlementService
                 $debitors[] = $debitor;
             }
         }
+
         return $transactions;
     }
-
 }
