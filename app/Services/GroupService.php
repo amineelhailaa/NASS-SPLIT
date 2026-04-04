@@ -2,6 +2,9 @@
 
 namespace App\Services;
 
+use App\Models\Group;
+use App\Models\User;
+
 class GroupService
 {
     /**
@@ -13,11 +16,13 @@ class GroupService
     }
 
 
-    public function createGroup($user,$data)
+    public function createGroup(User $user,$data)
     {
-        return $user->groups()->create([ // should verify if i can createw grp with that relation !
+        $group =  Group::create([ // should verify if i can createw grp with that relation !
             'name' => $data->name,
             'description' => $data->description,
         ]);
+        $user->groups()->attach($group->id,['role'=>'owner']);
+        return $group;
     }
 }
