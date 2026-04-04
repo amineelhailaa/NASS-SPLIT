@@ -19,7 +19,8 @@ class LoginRequest extends FormRequest
         return true;
     }
 
-    public function remember(): bool {
+    public function remember(): bool
+    {
         return $this->boolean('remember');
     }
 }
