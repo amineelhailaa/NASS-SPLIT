@@ -29,10 +29,14 @@ class AppServiceProvider extends ServiceProvider
 
         //gates:
         Gate::define('owner', function (User $user, Group $group) {
-            return $user->groups()->whereKey($group->id)->wherePivot('role', 'owner')->where('status','active')->exists();
+            return $user->groups()->whereKey($group->id)->wherePivot('role', 'owner')->wherePivot('status','active')->exists();
         });
         Gate::define('member', function (User  $user, Group $group) {
             return $user->groups()->whereKey($group->id)->wherePivot('status','active')->exists();
+        });
+
+        Gate::define('admin',function (User $user){
+            return $user->admin()->exists();
         });
     }
 
