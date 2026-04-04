@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 class PaymentController extends Controller
 {
     use ApiResponses;
+
     /**
      * Display a listing of the resource.
      */
@@ -25,6 +26,7 @@ class PaymentController extends Controller
             })
             ->with('debtor.user', 'creditor.user')
             ->paginate();
+
         return $this->successResponse($payments);
     }
 
@@ -33,16 +35,17 @@ class PaymentController extends Controller
      */
     public function store(PaymentRequest $request)
     {
-           $user = $request->user();
-           //need validation here dont forget it .
+        $user = $request->user();
+        // need validation here dont forget it .
         $user->memberships()->whereIn('id',
-            [$request->creditor_id,$request->debtor_id])->firstOrFail();
-         $payment = Payment::create([
-               'creditor_id' => $request->creditor_id,
-               'debtor_id' => $request->debtor_id,
-               'amount' => $request->amount,
-           ]);
-         return $this->createdResponse($payment);
+            [$request->creditor_id, $request->debtor_id])->firstOrFail();
+        $payment = Payment::create([
+            'creditor_id' => $request->creditor_id,
+            'debtor_id' => $request->debtor_id,
+            'amount' => $request->amount,
+        ]);
+
+        return $this->createdResponse($payment);
     }
 
     /**
@@ -50,8 +53,9 @@ class PaymentController extends Controller
      */
     public function show(string $id)
     {
-       $payment = Payment::findOrFail($id);
-       return $this->successResponse($payment);
+        $payment = Payment::findOrFail($id);
+
+        return $this->successResponse($payment);
     }
 
     /**
