@@ -1,0 +1,16 @@
+{
+    "preset": "laravel",
+    "exclude": [
+        "bootstrap/cache",
+        "storage",
+        "vendor"
+    ],
+    "notName": [
+        "_ide_helper.php",
+        "_ide_helper_models.php",
+        ".phpstorm.meta.php"
+    ],
+    "notPath": [
+        "public/index.php"
+    ]
+}
