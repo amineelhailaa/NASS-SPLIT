@@ -46,13 +46,13 @@ class ProfileController extends Controller
     public function edit(Request $request)
     {
         $user = $request->user();
-        return $this->successResponse($user->with('avatar'));
+        return $this->successResponse($user);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateProfileRequest $request, string $id)
+    public function update(UpdateProfileRequest $request)
     {
         $user = $request->user();
         $user->update($request->only(['name']));
