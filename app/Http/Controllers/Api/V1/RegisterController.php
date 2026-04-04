@@ -11,18 +11,21 @@ use Illuminate\Support\Facades\Hash;
 class RegisterController extends Controller
 {
     //
-    public function index(){
+    public function index()
+    {
         return view('auth.register');
     }
 
-    public function create(RegisterFormRequest $request){
+    public function create(RegisterFormRequest $request)
+    {
 
-      $user =  User::create([
+        $user = User::create([
             'name' => $request->fullName,
             'email' => $request->email,
-            'password'=>Hash::make($request->password)
+            'password' => Hash::make($request->password),
         ]);
-    Auth::login($user);
-    return redirect()->route('login');
+        Auth::login($user);
+
+        return redirect()->route('login');
     }
 }
