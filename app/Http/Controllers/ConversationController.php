@@ -2,18 +2,24 @@
 
 namespace App\Http\Controllers;
 
+use App\ApiResponses;
+use App\Models\Conversation;
 use Illuminate\Http\Request;
 
 class ConversationController extends Controller
 {
+    use ApiResponses;
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request)
     {
         $user = $request->user();
-
-
+        $conversations = $user->conversations()
+            ->with('lastMessage.user')
+        ->withMax('messages','created_at')->orderByDesc('messages_max_created_at')
+        ->get();
+        return $this->successResponse($conversations);
     }
 
     /**
@@ -21,15 +27,25 @@ class ConversationController extends Controller
      */
     public function store(Request $request)
     {
-        //
+
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Conversation $conversation, Request $request)
     {
-        //
+        $user = $request->user();
+        $conversation = $user->conversations()
+            ->where('conversations.id', $conversation->id)
+            ->with([
+                'group',
+                'messages'=>function   ($query) {
+                    $query->latest('created_at');
+                }
+            ]);
+
+        return $this->successResponse($conversation);
     }
 
     /**
