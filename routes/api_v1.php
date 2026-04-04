@@ -4,6 +4,6 @@
 use App\Http\Controllers\Api\V1\MessageController;
 
 Route::middleware('auth:sanctum')->group(function() {
-    Route::post('/conversation/{conversation}', [MessageController::class, 'store']);
-    Route::delete('/conversation/{message}', [MessageController::class,'destroy']);
+    Route::post('/conversations/{conversation}', [MessageController::class, 'store']);
+    Route::delete('/messages/{message}', [MessageController::class,'destroy']);
 });
