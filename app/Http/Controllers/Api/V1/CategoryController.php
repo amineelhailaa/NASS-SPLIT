@@ -12,12 +12,13 @@ use Illuminate\Support\Facades\Gate;
 class CategoryController extends Controller
 {
     use ApiResponses;
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        return  $this->successResponse(Category::all());
+        return $this->successResponse(Category::all());
     }
 
     /**
@@ -26,9 +27,10 @@ class CategoryController extends Controller
     public function store(CategoryFormRequest $request)
     {
         Gate::authorize('admin');
-       $category = Category::create([
-            'name'=> $request->input('name')
+        $category = Category::create([
+            'name' => $request->input('name'),
         ]);
+
         return $this->createdResponse($category);
     }
 
@@ -55,6 +57,7 @@ class CategoryController extends Controller
     {
         Gate::authorize('admin');
         Category::findOrFail($id)->delete();
+
         return $this->noContentResponse();
     }
 }
