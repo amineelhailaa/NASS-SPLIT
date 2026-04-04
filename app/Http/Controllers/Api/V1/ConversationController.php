@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 class ConversationController extends Controller
 {
     use ApiResponses;
+
     /**
      * Display a listing of the resource.
      */
@@ -18,18 +19,16 @@ class ConversationController extends Controller
         $user = $request->user();
         $conversations = $user->conversations()
             ->with('lastMessage.user')
-        ->withMax('messages','created_at')->orderByDesc('messages_max_created_at')
-        ->get();
+            ->withMax('messages', 'created_at')->orderByDesc('messages_max_created_at')
+            ->get();
+
         return $this->successResponse($conversations);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
-    {
-
-    }
+    public function store(Request $request) {}
 
     /**
      * Display the specified resource.
@@ -41,9 +40,9 @@ class ConversationController extends Controller
             ->where('conversations.id', $conversation->id)
             ->with([
                 'group',
-                'messages'=>function   ($query) {
+                'messages' => function ($query) {
                     $query->latest('created_at');
-                }
+                },
             ])->firstOrFail();
 
         return $this->successResponse($conversation);
