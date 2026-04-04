@@ -5,7 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class Expense extends Model
@@ -19,12 +18,10 @@ class Expense extends Model
         'amount',
     ];
 
-
     public function payer()
     {
         return $this->belongsTo(Membership::class, 'payer_id');
     }
-
 
     public function group(): BelongsTo
     {
@@ -38,10 +35,10 @@ class Expense extends Model
 
     public function splits(): HasMany
     {
-        return $this->hasMany(Split::class,'expense_id');
+        return $this->hasMany(Split::class, 'expense_id');
     }
 
-    //files
+    // files
     public function attachments(): MorphMany
     {
         return $this->morphMany(Attachment::class, 'attachable');
