@@ -25,15 +25,15 @@ class ExpenseFormRequest extends FormRequest
         return [
             'title' => 'required|string',
             'amount' => 'required|numeric|min:1',
-            'category_id' => 'nullable|', //exists:categories,id adding it after
+            'category_id' => 'nullable|', // exists:categories,id adding it after
             'date' => 'required|date',
             'payer_id' => 'required|exists:memberships,id',
             'split_strategy' => 'required|in:equal,percentage,fixed',
             'attachments' => ['nullable', 'array'],
-            'attachments.*' => ['file', 'max:5120'], //images or what ever
+            'attachments.*' => ['file', 'max:5120'], // images or what ever
             'participants' => ['required', 'array', 'min:1'],
             'participants.*' => ['required', 'array'],
-            'participants.*.membership_id' => ['required', 'integer','exists:memberships,id'],
+            'participants.*.membership_id' => ['required', 'integer', 'exists:memberships,id'],
             'participants.*.amount' => ['required_if:split_strategy,fixed', 'numeric', 'gt:0'],
             'participants.*.percentage' => ['required_if:split_strategy,percentage', 'numeric', 'gt:0', 'lte:100'],
         ];
