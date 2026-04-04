@@ -13,6 +13,6 @@ class Category extends Model
 
     public function expenses(): HasMany
     {
-        return $this->hasMany(Expense::class,'category_id');
+        return $this->hasMany(Expense::class, 'category_id');
     }
 }
