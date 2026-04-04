@@ -44,7 +44,7 @@ class ConversationController extends Controller
                 'messages'=>function   ($query) {
                     $query->latest('created_at');
                 }
-            ])->get();
+            ])->firstOrFail();
 
         return $this->successResponse($conversation);
     }
