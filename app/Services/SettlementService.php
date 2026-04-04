@@ -16,11 +16,11 @@ class SettlementService
 
     public function forGroup(Group $group): array
     {
-        $memberships = $group->members(); //memberships :)
+        $memberships = $group->members()->get(); //memberships :)
         $netBalances = [];
         foreach ($memberships as $member) {
             $credits = round($member->splitsAsCreditor()->where('status', 'pending')->sum('amount') * 100);
-            $debits = round($member->splitsAsDebitor()->where('status', 'pending')->sum('amount') * 100);
+            $debits = round($member->splitsAsDebtor()->where('status', 'pending')->sum('amount') * 100);
             $netBalances[$member->id] = $credits - $debits;
         }
 
