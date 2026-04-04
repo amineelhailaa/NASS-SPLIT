@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\GroupFormRequest;
 use App\Models\Group;
 use App\Services\GroupService;
+use App\Services\SettlementService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 
@@ -18,7 +19,9 @@ class GroupController extends Controller
      */
 
     public function __construct(
-       private GroupService $groupService){
+       private GroupService $groupService,
+        private SettlementService $settlementService
+    ){
 
     }
     public function index(Request $request)
@@ -105,5 +108,35 @@ class GroupController extends Controller
        return $this->successResponse([],'group deleted');
     }
 
+
+    public function members(Group $group){
+        Gate::authorize('member',$group);
+      return $this->successResponse($group->users()->with('avatar')->get());
+    }
+
+
+    public function statistics(Group $group){
+
+    }
+
+    public function myBalance(Request $request,Group $group){
+        Gate::authorize('member',$group);
+        $user = $request->user();
+        $membership = $user->memberships()->where('group_id',$group->id)->firstOrFail();
+       return $this->successResponse(
+           $membership->splitsAsCreditor()
+               ->where('splits.status','unpaid')
+               ->sum('amount')
+           - $membership->splitsAsDebtor()
+               ->where('splits.status','unpaid')
+               ->sum('amount'));
+    }
+
+
+    public function owes(Request $request, Group $group){
+        Gate::authorize('member',$group);
+       $owes =  $this->settlementService->forGroup($group);
+       return $this->successResponse($owes);
+    }
 
 }
