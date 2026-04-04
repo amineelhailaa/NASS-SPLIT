@@ -15,14 +15,14 @@ class GroupService
         //
     }
 
-
-    public function createGroup(User $user,$data)
+    public function createGroup(User $user, $data)
     {
-        $group =  Group::create([ // should verify if i can createw grp with that relation !
+        $group = Group::create([ // should verify if i can createw grp with that relation !
             'name' => $data->name,
             'description' => $data->description,
         ]);
-        $user->groups()->attach($group->id,['role'=>'owner']);
+        $user->groups()->attach($group->id, ['role' => 'owner']);
+
         return $group;
     }
 }
