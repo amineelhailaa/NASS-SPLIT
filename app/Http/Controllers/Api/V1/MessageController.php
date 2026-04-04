@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\ApiResponses;
+use App\Events\MessageSent;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\MessageRequest;
 use App\Models\Conversation;
@@ -34,6 +35,8 @@ class MessageController extends Controller
             'user_id' => $user->id,
             'message' => $request->input('message'),
         ]);
+        $message->load('user');
+        broadcast(new MessageSent($message))->toOthers();
 
         return $this->createdResponse($message);
     }
