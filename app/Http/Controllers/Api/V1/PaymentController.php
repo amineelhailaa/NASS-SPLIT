@@ -14,9 +14,18 @@ class PaymentController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $user = $request->user();
+        $membershipIds = $user->memberships()->get();
+        $payments = Payment::query()
+            ->where(function ($q) use ($membershipIds) {
+                $q->whereIn('creditor_id', $membershipIds)
+                    ->orWhereIn('debtor_id', $membershipIds);
+            })
+            ->with('debtor.user', 'creditor.user')
+            ->paginate();
+        return $this->successResponse($payments);
     }
 
     /**
@@ -41,7 +50,8 @@ class PaymentController extends Controller
      */
     public function show(string $id)
     {
-        //
+       $payment = Payment::findOrFail($id);
+       return $this->successResponse($payment);
     }
 
     /**
