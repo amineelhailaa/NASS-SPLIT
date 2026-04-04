@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\ApiResponses;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Api\V1\CategoryFormRequest;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
@@ -22,10 +23,13 @@ class CategoryController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(CategoryFormRequest $request)
     {
         Gate::authorize('admin');
-
+       $category = Category::create([
+            'name'=> $request->input('name')
+        ]);
+        return $this->createdResponse($category);
     }
 
     /**
@@ -49,6 +53,8 @@ class CategoryController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        Gate::authorize('admin');
+        Category::find($id)->delete();
+        return $this->noContentResponse();
     }
 }
