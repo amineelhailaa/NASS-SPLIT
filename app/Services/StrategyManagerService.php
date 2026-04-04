@@ -11,27 +11,27 @@ class StrategyManagerService
     /**
      * Create a new class instance.
      */
-
     public function dataToInsert($splitStrategy, $amount, $participants): array
     {
         return $this->whichStrategy($splitStrategy)->calculate($amount, $participants);
     }
 
-
-    public function whichStrategy(string $splitStrategy){
-        switch ($splitStrategy){
+    public function whichStrategy(string $splitStrategy)
+    {
+        switch ($splitStrategy) {
 
             case 'percentage':
-                $strategy=  new PercentageSplit();
+                $strategy = new PercentageSplit;
                 break;
             case 'fixed':
-                $strategy = new FixedSplit();
+                $strategy = new FixedSplit;
                 break;
 
-            default :
-                $strategy = new EqualSplit();
+            default:
+                $strategy = new EqualSplit;
                 break;
         }
+
         return $strategy;
     }
 }
