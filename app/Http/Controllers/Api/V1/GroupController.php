@@ -117,6 +117,13 @@ class GroupController extends Controller
         return $this->successResponse($group->users()->with('avatar')->get());
     }
 
+    public function invitationCode(Group $group)
+    {
+        Gate::authorize('owner', $group);
+
+        return $this->successResponse(['invitation_code' => $group->invitation_code]);
+    }
+
     public function statistics(Group $group) {}
 
     public function myBalance(Request $request, Group $group)

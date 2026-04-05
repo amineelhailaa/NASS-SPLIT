@@ -10,11 +10,22 @@ use App\Models\Invitation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Str;
 
 class InvitationController extends Controller
 {
     use ApiResponses;
+
+    public function show(string $token, Request $request)
+    {
+        $result = $this->validateInvitation($token, $request);
+        if ($result instanceof JsonResponse) {
+            return $result;
+        }
+
+        return $this->successResponse($result);
+    }
 
     public function inviteEmail(Request $request, Group $group)
     {
@@ -81,26 +92,13 @@ class InvitationController extends Controller
 
     public function joinByInvitation(string $token, Request $request)
     {
-        $user = $request->user();
-        $invitation = Invitation::with('group')->where('token', $token)
-            ->firstOrFail();
+        $result = $this->validateInvitation($token, $request);
+        if ($result instanceof JsonResponse) {
+            return $result;
+        }
+        $invitation = $result;
 
-        $alreadyMember = $user->groups()->wherePivot('group_id', $invitation->group_id)->exists();
-        if ($alreadyMember) {
-            return $this->errorResponse('U Were or are a Member', 403);
-        }
-        if ($invitation->email !== $user->email) {
-            return $this->errorResponse('This Invitation not for Your Account', 403);
-        }
-        if ($invitation->status !== 'pending') {
-            return $this->errorResponse('this invitation has already been used or cancelled', 403);
-        }
-        if ($invitation->expires_at->isPast()) {
-            $invitation->update(['status' => 'expired']);
-
-            return $this->errorResponse('invitation expired !', 403);
-        }
-        $user->groups()->attach($invitation->group_id, [
+        $request->user()->groups()->attach($invitation->group_id, [
             'role' => 'member',
             'status' => 'active',
         ]);
@@ -108,6 +106,47 @@ class InvitationController extends Controller
 
         return $this->successResponse($invitation->group,
             'Successfully joined the group.', 201);
+    }
 
+    public function declineInvitation(string $token, Request $request)
+    {
+        $result = $this->validateInvitation($token, $request);
+        if ($result instanceof JsonResponse) {
+            return $result;
+        }
+
+        $result->update(['status' => 'declined']);
+
+        return $this->successResponse(null, 'Invitation declined');
+    }
+
+    private function validateInvitation(string $token, Request $request)
+    {
+        $user = $request->user();
+        $invitation = Invitation::with('group')->where('token',
+            $token)->firstOrFail();
+
+        if ($invitation->email !== $user->email) {
+            return $this->errorResponse('This invitation is not for your account', 403);
+        }
+
+        if ($invitation->status !== 'pending') {
+            return $this->errorResponse('This invitation has already been used or cancelled', 403);
+        }
+
+        if ($invitation->expires_at->isPast()) {
+            $invitation->update(['status' => 'expired']);
+
+            return $this->errorResponse('Invitation expired', 403);
+        }
+
+        $alreadyMember = $user->groups()->wherePivot('group_id',
+            $invitation->group_id)->exists();
+        if ($alreadyMember) {
+            return $this->errorResponse('You were or are a member',
+                403);
+        }
+
+        return $invitation;
     }
 }

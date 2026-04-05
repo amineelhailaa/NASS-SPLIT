@@ -10,6 +10,16 @@ use App\Http\Controllers\Api\V1\PaymentController;
 use App\Http\Controllers\Api\V1\ProfileController;
 
 Route::middleware('auth:sanctum')->group(function () {
+
+    // ===================//Owner//=======================//
+    Route::middleware('can:owner')->group(function () {
+        // invitation:
+        Route::post('/groups/{group}/invite', [InvitationController::class, 'inviteEmail']);
+        Route::post('/groups/join/{code}', [InvitationController::class, 'joinGroupByCode']);
+        Route::post('/invitations/{token}/accept', [InvitationController::class, 'joinByInvitation']);
+        Route::get('/groups/{group}/invitation-code', [GroupController::class, 'invitationCode']);
+
+    });
     // profile:
     Route::get('/profile', [ProfileController::class, 'edit']);
     Route::patch('/profile', [ProfileController::class, 'update']);
