@@ -147,7 +147,7 @@ class GroupController extends Controller
         $members = $group->members()->with('user.avatar')->get()->keyBy('id'); // make an assoc with ids inside
         $owes = array_map(fn ($owe) => [
             'creditor' => $members[$owe['creditor_id']]->user,
-            'debtor' => $members[$owes['debtor_id']]->user,
+            'debtor' => $members[$owe['debtor_id']]->user,
             'amount' => $owe['amount'],
         ], $owes);
 
