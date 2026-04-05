@@ -15,6 +15,13 @@ class Invitation extends Model
         'expires_at',
     ];
 
+    protected function casts(): array
+    {
+        return [
+            'expires_at' => 'datetime',
+        ];
+    }
+
     public function group(): BelongsTo
     {
         return $this->belongsTo(Group::class, 'group_id');
