@@ -7,10 +7,10 @@ use App\Http\Controllers\Controller;
 use App\Mail\GroupInvitationMail;
 use App\Models\Group;
 use App\Models\Invitation;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Str;
 
 class InvitationController extends Controller
@@ -87,7 +87,7 @@ class InvitationController extends Controller
         }
         $user->groups()->attach($group->id);
 
-        return $this->successResponse($group);
+        return $this->successResponse($group, 'You are joined the Group '.$group->name);
     }
 
     public function joinByInvitation(string $token, Request $request)
