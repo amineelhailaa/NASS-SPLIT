@@ -6,7 +6,6 @@ use App\ApiResponses;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\CategoryFormRequest;
 use App\Models\Category;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 
 class CategoryController extends Controller
@@ -45,9 +44,12 @@ class CategoryController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(CategoryFormRequest $request, Category $category)
     {
-        //
+        Gate::authorize('admin');
+        $category->update($request->only(['name']));
+
+        return $this->successResponse($category);
     }
 
     /**
