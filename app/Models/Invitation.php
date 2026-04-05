@@ -12,6 +12,7 @@ class Invitation extends Model
         'email',
         'token',
         'status',
+        'expires_at',
     ];
 
     public function group(): BelongsTo

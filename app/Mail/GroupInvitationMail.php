@@ -2,6 +2,7 @@
 
 namespace App\Mail;
 
+use App\Models\Invitation;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Attachment;
@@ -16,7 +17,7 @@ class GroupInvitationMail extends Mailable
     /**
      * Create a new message instance.
      */
-    public function __construct(public $group, public $sender)
+    public function __construct(public $group, public $sender, public Invitation $invitation)
     {
         //
     }
@@ -39,7 +40,7 @@ class GroupInvitationMail extends Mailable
         return new Content(
             markdown: 'emails.group-invitation',
             with: [
-                'joinUrl' => config('app.frontend_url')."/join/{$this->group->invitation_code}",
+                'joinUrl' => config('app.frontend_url')."/join/{$this->invitation->token}",
                 'groupName' => $this->group->name,
                 'sender' => $this->sender,
             ]
