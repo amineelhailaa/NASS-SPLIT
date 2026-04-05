@@ -16,6 +16,7 @@ Route::middleware('auth:sanctum')->group(function () {
         // invitation:
         Route::post('/groups/{group}/invite', [InvitationController::class, 'inviteEmail']);
         Route::get('/groups/{group}/invitation-code', [GroupController::class, 'invitationCode']);
+        Route::get('/groups/{group}/invitations/pending',[InvitationController::class,'pendingInvitations']);
     });
 
     // invitation
@@ -23,12 +24,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/invitations/{token}/accept', [InvitationController::class, 'joinByInvitation']);
     Route::post('/invitations/{token}/decline', [InvitationController::class, 'declineInvitation']);
     Route::get('/invitations/{token}', [InvitationController::class, 'show']);
+
     // profile:
     Route::get('/profile', [ProfileController::class, 'edit']);
     Route::patch('/profile', [ProfileController::class, 'update']);
 
-    // Invitation:
-    Route::post('/groups/join/{code}', [InvitationController::class, 'joinGroup']);
 
     // Group:
     Route::get('/groups', [GroupController::class, 'index']);

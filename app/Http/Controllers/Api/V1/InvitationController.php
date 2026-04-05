@@ -17,6 +17,18 @@ class InvitationController extends Controller
 {
     use ApiResponses;
 
+    public function pendingInvitations(Group $group)
+    {
+        Gate::authorize('owner', $group);
+
+        $invitations = Invitation::where('group_id', $group->id)
+            ->where('status', 'pending')
+            ->where('expires_at', '>', now())
+            ->get();
+
+        return $this->successResponse($invitations);
+    }
+
     public function show(string $token, Request $request)
     {
         $result = $this->validateInvitation($token, $request);
