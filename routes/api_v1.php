@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\V1\CategoryController;
 use App\Http\Controllers\Api\V1\ConversationController;
 use App\Http\Controllers\Api\V1\ExpenseController;
 use App\Http\Controllers\Api\V1\GroupController;
+use App\Http\Controllers\Api\V1\InvitationController;
 use App\Http\Controllers\Api\V1\MessageController;
 use App\Http\Controllers\Api\V1\PaymentController;
 use App\Http\Controllers\Api\V1\ProfileController;
@@ -12,6 +13,9 @@ Route::middleware('auth:sanctum')->group(function () {
     // profile:
     Route::get('/profile', [ProfileController::class, 'edit']);
     Route::patch('/profile', [ProfileController::class, 'update']);
+
+    // Invitation:
+    Route::post('/groups/join/{code}', [InvitationController::class, 'joinGroup']);
 
     // Group:
     Route::get('/groups', [GroupController::class, 'index']);
@@ -33,7 +37,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/payments', [PaymentController::class, 'index']);
     Route::post('/payments', [PaymentController::class, 'store']);
     Route::get('/payments/{id}', [PaymentController::class, 'show']);
-
 
     // conversation
     Route::get('/conversations', [ConversationController::class, 'index']);

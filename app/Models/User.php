@@ -17,8 +17,8 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
-
     protected $with = ['avatar'];
+
     /**
      * The attributes that are mass assignable.
      *
@@ -66,7 +66,7 @@ class User extends Authenticatable
     public function groups(): BelongsToMany
     {
         return $this->belongsToMany(Group::class, 'memberships')
-            ->withPivot(['id', 'role', 'left_at', 'status'])
+            ->withPivot(['id', 'role', 'left_at', 'status', 'group_id'])
             ->withTimestamps();
     }
 
