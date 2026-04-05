@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('description')->nullable();
-            $table->integer('invitation_code');
+            $table->index('invitation_code');
             $table->string('status')->default('active');
             $table->timestamps();
         });
