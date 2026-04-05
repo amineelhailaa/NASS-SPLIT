@@ -24,7 +24,10 @@ class InvitationController extends Controller
         ]);
         $email = $validated['email'];
 
-        if ($group->users()->where('email', $email)->exists()) {
+        if ($group->members()->whereHas('user',
+            fn ($query) => $query
+                ->where('email', $email))
+            ->exists()) {
             return $this->errorResponse('User was a member before !', 422);
         }
 
@@ -59,15 +62,18 @@ class InvitationController extends Controller
 
         $user = $request->user();
         $group = Group::where('invitation_code', $code)->firstOrFail();
-        abort_if(Gate::allows('member', $group),
-            403);
+        if (Gate::allows('member', $group)) {
+            return $this->errorResponse('already member', 403);
+        }
 
-        abort_if(
-            $user->groups()
-                ->wherePivot('group_id', $group->id)
-                ->wherePivot('status', 'inactive')
-                ->exists(), 403
-        );
+        $exist = $user->groups()
+            ->wherePivot('group_id', $group->id)
+            ->wherePivot('status', 'inactive')
+            ->exists();
+
+        if ($exist) {
+            return $this->errorResponse('already kicked member', 403);
+        }
         $user->groups()->attach($group->id);
 
         return $this->successResponse($group);
@@ -76,9 +82,13 @@ class InvitationController extends Controller
     public function joinByInvitation(string $token, Request $request)
     {
         $user = $request->user();
-        $invitation = Invitation::where('token', $token)
+        $invitation = Invitation::with('group')->where('token', $token)
             ->firstOrFail();
 
+        $alreadyMember = $user->groups()->wherePivot('group_id', $invitation->group_id)->exists();
+        if ($alreadyMember) {
+            return $this->errorResponse('U Were or are a Member', 403);
+        }
         if ($invitation->email !== $user->email) {
             return $this->errorResponse('This Invitation not for Your Account', 403);
         }

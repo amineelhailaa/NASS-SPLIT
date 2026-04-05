@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('group_id')->constrained('groups')->cascadeOnDelete();
             $table->string('email');
+            $table->index(['group_id', 'email']);
             $table->string('token')->unique();
             $table->enum('status', ['pending', 'accepted', 'expired'])->default('pending');
             $table->timestamp('expires_at')->nullable();
