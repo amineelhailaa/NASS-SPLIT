@@ -11,7 +11,6 @@ class Split extends Model
         'expense_id',
         'debtor_id',
         'amount',
-        'status',
     ];
 
     public function expense(): BelongsTo

@@ -16,12 +16,18 @@ class SettlementService
 
     public function forGroup(Group $group): array
     {
-        $memberships = $group->members()->get(); // memberships :)
+        $memberships = $group->members()->get();
         $netBalances = [];
         foreach ($memberships as $member) {
-            $credits = round($member->splitsAsCreditor()->where('status', 'pending')->sum('amount') * 100);
-            $debits = round($member->splitsAsDebtor()->where('status', 'pending')->sum('amount') * 100);
-            $netBalances[$member->id] = $credits - $debits;
+            $splitsAsCreditor = $member->splitsAsCreditor()->sum('amount');
+            $splitsAsDebtor = $member->splitsAsDebtor()->sum('amount');
+            $paymentsReceived = $member->paymentsAsCreditor()->sum('amount');
+            $paymentsMade = $member->paymentsAsDebtor()->sum('amount');
+
+            $totalCredits = $splitsAsCreditor + $paymentsMade;
+            $totalDebits = $splitsAsDebtor + $paymentsReceived;
+
+            $netBalances[$member->id] = round(($totalCredits - $totalDebits) * 100);
         }
 
         return $this->buildTransactions($netBalances);

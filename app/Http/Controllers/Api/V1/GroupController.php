@@ -67,9 +67,8 @@ class GroupController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Group $group)
     {
-        $group = Group::findOrFail($id);
         Gate::authorize('member', $group);
 
         return $this->successResponse($group);
@@ -79,9 +78,8 @@ class GroupController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(GroupFormRequest $request, string $id)
+    public function update(GroupFormRequest $request, Group $group)
     {
-        $group = Group::findOrFail($id);
         Gate::authorize('owner', [$group]);
         $group->update([
             'name' => $request->name,
@@ -103,9 +101,8 @@ class GroupController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Group $group)
     {
-        $group = Group::findOrFail($id);
         Gate::authorize('owner', [$group]);
         $group->delete();
 
@@ -168,13 +165,14 @@ class GroupController extends Controller
         $user = $request->user();
         $membership = $user->memberships()->where('group_id', $group->id)->firstOrFail();
 
-        return $this->successResponse(
-            $membership->splitsAsCreditor()
-                ->where('splits.status', 'pending')
-                ->sum('amount')
-            - $membership->splitsAsDebtor()
-                ->where('splits.status', 'pending')
-                ->sum('amount'));
+        $splitsAsCreditor = $membership->splitsAsCreditor()->sum('amount');
+        $splitsAsDebtor = $membership->splitsAsDebtor()->sum('amount');
+        $paymentsReceived = $membership->paymentsAsCreditor()->sum('amount');
+        $paymentsMade = $membership->paymentsAsDebtor()->sum('amount');
+
+        $balance = ($splitsAsCreditor + $paymentsMade) - ($splitsAsDebtor + $paymentsReceived);
+
+        return $this->successResponse($balance);
     }
 
     public function owes(Request $request, Group $group)

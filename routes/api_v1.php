@@ -37,11 +37,24 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     // ===================//Member or Owner//=======================//
+
     Route::middleware('can:member,group')->group(function () {
         Route::get('/groups/{group}/statistics', [GroupController::class, 'statistics']);
+        Route::get('/groups/{group}', [GroupController::class, 'show']);
+        Route::patch('/groups/{group}', [GroupController::class, 'update']);
+        Route::delete('/groups/{group}', [GroupController::class, 'destroy']);
+        Route::get('/groups/{group}/members', [GroupController::class, 'members']);
+        Route::get('/groups/{group}/balance', [GroupController::class, 'myBalance']);
+        Route::get('/groups/{group}/owes', [GroupController::class, 'owes']);
+
+        // Expense:
+        Route::get('/groups/{group}/expenses', [ExpenseController::class, 'index']);
+        Route::post('/groups/{group}/expenses', [ExpenseController::class, 'store']);
+        Route::get('/expenses/{id}', [ExpenseController::class, 'show']);
+        Route::delete('/expenses/{id}', [ExpenseController::class, 'destroy']);
 
     });
-    // invitation
+       // invitation
     Route::post('/groups/join/{code}', [InvitationController::class, 'joinGroupByCode']);
     Route::post('/invitations/{token}/accept', [InvitationController::class, 'joinByInvitation']);
     Route::post('/invitations/{token}/decline', [InvitationController::class, 'declineInvitation']);
@@ -54,18 +67,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // Group:
     Route::get('/groups', [GroupController::class, 'index']);
     Route::post('/groups', [GroupController::class, 'store']);
-    Route::get('/groups/{id}', [GroupController::class, 'show']);
-    Route::patch('/groups/{id}', [GroupController::class, 'update']);
-    Route::delete('/groups/{id}', [GroupController::class, 'destroy']);
-    Route::get('/groups/{group}/members', [GroupController::class, 'members']);
-    Route::get('/groups/{group}/balance', [GroupController::class, 'myBalance']);
-    Route::get('/groups/{group}/owes', [GroupController::class, 'owes']);
 
-    // Expense:
-    Route::get('/groups/{id}/expenses', [ExpenseController::class, 'index']);
-    Route::post('/groups/{group}/expenses', [ExpenseController::class, 'store']);
-    Route::get('/expenses/{id}', [ExpenseController::class, 'show']);
-    Route::delete('/expenses/{id}', [ExpenseController::class, 'destroy']);
 
     // Pyament:
     Route::get('/payments', [PaymentController::class, 'index']);

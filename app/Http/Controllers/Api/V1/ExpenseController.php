@@ -19,9 +19,8 @@ class ExpenseController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request, $id)
+    public function index(Request $request, Group $group)
     {
-        $group = Group::findOrFail($id);
         Gate::authorize('member', $group);
 
         return $this->successResponse($group->expenses()
