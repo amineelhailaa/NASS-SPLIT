@@ -29,6 +29,23 @@ class InvitationController extends Controller
         return $this->successResponse($invitations);
     }
 
+    public function cancelInvitation(Group $group, Invitation $invitation)
+    {
+        Gate::authorize('owner', $group);
+
+        if ($invitation->group_id !== $group->id) {
+            return $this->errorResponse('Invitation does not belong to this group', 403);
+        }
+
+        if ($invitation->status !== 'pending') {
+            return $this->errorResponse('This invitation is not pending', 422);
+        }
+
+        $invitation->update(['status' => 'cancelled']);
+
+        return $this->successResponse(null, 'Invitation cancelled');
+    }
+
     public function show(string $token, Request $request)
     {
         $result = $this->validateInvitation($token, $request);
