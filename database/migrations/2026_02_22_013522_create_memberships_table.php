@@ -18,7 +18,7 @@ return new class extends Migration
             $table->enum('role', ['owner', 'member'])->default('member');
             $table->timestamp('left_at')->nullable();
             $table->decimal('balance', 12, 2)->default(0);
-            $table->string('status')->default('active');
+            $table->enum('status', ['active', 'inactive'])->default('active');
             $table->timestamps();
 
             $table->unique(['group_id', 'user_id']);
