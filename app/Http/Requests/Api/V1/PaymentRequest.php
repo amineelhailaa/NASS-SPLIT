@@ -23,8 +23,8 @@ class PaymentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'creditor_id' => 'required|exists:memberships',
-            'debtor_id' => 'required|exists:memberships|different:creditor_id',
+            'creditor_id' => 'required|integer|exists:memberships,id',
+            'debtor_id' => 'required|integer|exists:memberships,id|different:creditor_id',
             'amount' => 'required|numeric|min:0.01',
         ];
     }

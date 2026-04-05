@@ -170,10 +170,10 @@ class GroupController extends Controller
 
         return $this->successResponse(
             $membership->splitsAsCreditor()
-                ->where('splits.status', 'unpaid')
+                ->where('splits.status', 'pending')
                 ->sum('amount')
             - $membership->splitsAsDebtor()
-                ->where('splits.status', 'unpaid')
+                ->where('splits.status', 'pending')
                 ->sum('amount'));
     }
 

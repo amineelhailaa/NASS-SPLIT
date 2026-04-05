@@ -25,7 +25,7 @@ class ExpenseFormRequest extends FormRequest
         return [
             'title' => 'required|string',
             'amount' => 'required|numeric|min:1',
-            'category_id' => 'nullable|', // exists:categories,id adding it after
+            'category_id' => 'nullable|integer|exists:categories,id',
             'date' => 'required|date',
             'payer_id' => 'required|exists:memberships,id',
             'split_strategy' => 'required|in:equal,percentage,fixed',

@@ -36,6 +36,11 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::patch('/groups/{group}/members/{membership}/kick', [MembershipController::class, 'kick']);
     });
 
+    // ===================//Member or Owner//=======================//
+    Route::middleware('can:member,group')->group(function () {
+        Route::get('/groups/{group}/statistics', [GroupController::class, 'statistics']);
+
+    });
     // invitation
     Route::post('/groups/join/{code}', [InvitationController::class, 'joinGroupByCode']);
     Route::post('/invitations/{token}/accept', [InvitationController::class, 'joinByInvitation']);

@@ -41,7 +41,7 @@ class InvitationController extends Controller
             return $this->errorResponse('This invitation is not pending', 422);
         }
 
-        $invitation->update(['status' => 'cancelled']);
+        $invitation->update(['status' => 'expired']);
 
         return $this->successResponse(null, 'Invitation cancelled');
     }
@@ -144,7 +144,7 @@ class InvitationController extends Controller
             return $result;
         }
 
-        $result->update(['status' => 'declined']);
+        $result->update(['status' => 'expired']);
 
         return $this->successResponse(null, 'Invitation declined');
     }
