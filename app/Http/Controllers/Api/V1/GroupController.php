@@ -5,10 +5,12 @@ namespace App\Http\Controllers\Api\V1;
 use App\ApiResponses;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\GroupFormRequest;
+use App\Models\Expense;
 use App\Models\Group;
 use App\Services\GroupService;
 use App\Services\SettlementService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 
 class GroupController extends Controller
@@ -114,7 +116,8 @@ class GroupController extends Controller
     {
         Gate::authorize('member', $group);
 
-        return $this->successResponse($group->users()->with('avatar')->get());
+        // return ids to apply membership controller methods
+        return $this->successResponse($group->members()->with('user.avatar')->get());
     }
 
     public function invitationCode(Group $group)
@@ -124,7 +127,40 @@ class GroupController extends Controller
         return $this->successResponse(['invitation_code' => $group->invitation_code]);
     }
 
-    public function statistics(Group $group) {}
+    public function statistics(Group $group, Request $request)
+    {
+        $user = $request->user();
+        Gate::authorize('member', $group);
+        $totalExpense = $group->expenses()->count();
+        $totalSpend = $group->expenses()->sum('amount');
+        $totalMembers = $group->users()->count();
+        $spendingByCategory = Expense::where('group_id', $group->id)
+            ->select('category_id', DB::raw('SUM(amount) as total'))
+            ->groupBy('category_id')
+            ->with('category:id,name')
+            ->get();
+        $dailySpending = Expense::where('group_id', $group->id)
+            ->select(DB::raw('DATE(date) as day'),
+                DB::raw('SUM(amount) as total'))
+            ->groupBy('day')
+            ->orderBy('day')
+            ->get();
+
+        $membership = $user->memberships()->where('group_id', $group->id)->firstOrFail();
+        $paidByMe = $membership->expensesPaid()->sum('amount');
+        $myShare = $membership->splitsAsDebtor()->sum('amount')
+            - $membership->splitsAsCreditor()->sum('amount');
+
+        return $this->successResponse([
+            'total_expenses' => $totalExpense,
+            'total_spent' => $totalSpend,
+            'total_members' => $totalMembers,
+            'paid_by_me' => $paidByMe,
+            'my_share' => $myShare,
+            'spending_by_category' => $spendingByCategory,
+            'daily_spending' => $dailySpending,
+        ]);
+    }
 
     public function myBalance(Request $request, Group $group)
     {
