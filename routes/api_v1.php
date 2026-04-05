@@ -1,22 +1,39 @@
 <?php
 
+use App\Http\Controllers\Api\V1\AdminController;
 use App\Http\Controllers\Api\V1\CategoryController;
 use App\Http\Controllers\Api\V1\ConversationController;
 use App\Http\Controllers\Api\V1\ExpenseController;
 use App\Http\Controllers\Api\V1\GroupController;
 use App\Http\Controllers\Api\V1\InvitationController;
+use App\Http\Controllers\Api\V1\MembershipController;
 use App\Http\Controllers\Api\V1\MessageController;
 use App\Http\Controllers\Api\V1\PaymentController;
 use App\Http\Controllers\Api\V1\ProfileController;
 
 Route::middleware('auth:sanctum')->group(function () {
 
+    // ===================//Admin//=======================//
+    Route::middleware('can:admin')->group(function () {
+        // categories:
+        Route::post('/categories', [CategoryController::class, 'store']);
+        Route::delete('/categories/{id}', [CategoryController::class, 'destroy']);
+        Route::patch('/categories/{category}', [CategoryController::class, 'update']);
+
+        // users
+        Route::patch('/users/{user}/ban', [AdminController::class, 'banUser']);
+        Route::patch('/users/{user}/unban', [AdminController::class, 'unBanUser']);
+    });
+
     // ===================//Owner//=======================//
-    Route::middleware('can:owner')->group(function () {
+    Route::middleware('can:owner,group')->group(function () {
         // invitation:
         Route::post('/groups/{group}/invite', [InvitationController::class, 'inviteEmail']);
         Route::get('/groups/{group}/invitation-code', [GroupController::class, 'invitationCode']);
-        Route::get('/groups/{group}/invitations/pending',[InvitationController::class,'pendingInvitations']);
+        Route::get('/groups/{group}/invitations/pending', [InvitationController::class, 'pendingInvitations']);
+        Route::patch('/groups/{group}/invitations/{invitation}/cancel', [InvitationController::class, 'cancelInvitation']);
+        // members
+        Route::patch('/groups/{group}/members/{membership}/kick', [MembershipController::class, 'kick']);
     });
 
     // invitation
@@ -28,7 +45,6 @@ Route::middleware('auth:sanctum')->group(function () {
     // profile:
     Route::get('/profile', [ProfileController::class, 'edit']);
     Route::patch('/profile', [ProfileController::class, 'update']);
-
 
     // Group:
     Route::get('/groups', [GroupController::class, 'index']);
@@ -62,12 +78,4 @@ Route::middleware('auth:sanctum')->group(function () {
     // categories
     Route::get('/categories', [CategoryController::class, 'index']);
 
-    // admin
-    Route::middleware('can:admin')->group(function () {
-        // categories:
-        Route::post('/categories', [CategoryController::class, 'store']);
-        Route::delete('/categories/{id}', [CategoryController::class, 'destroy']);
-        Route::patch('/categories/{category}', [CategoryController::class, 'update']);
-
-    });
 });
