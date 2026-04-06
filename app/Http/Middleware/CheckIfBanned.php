@@ -15,10 +15,17 @@ class CheckIfBanned
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if ($request->user()->ban) {
+        $user = $request->user();
+
+        if (! $user) { //not logged
+            return $next($request);
+        }
+
+        if ($user->ban) {
             return response()->json([
-                'status' => 'error',
-                'message' => 'Your Account has been Banned.',
+                'status' => 'Error',
+                'message' => 'Your account has been banned.',
+                'errors' => null,
             ], 403);
         }
 
