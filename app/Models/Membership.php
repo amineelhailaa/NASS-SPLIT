@@ -15,7 +15,6 @@ class Membership extends Model
         'user_id',
         'role',
         'left_at',
-        'balance',
         'status',
     ];
 
