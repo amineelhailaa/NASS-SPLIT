@@ -114,7 +114,7 @@ class GroupController extends Controller
         Gate::authorize('member', $group);
 
         // return ids to apply membership controller methods
-        return $this->successResponse($group->members()->with('user.avatar')->get());
+        return $this->successResponse($group->members()->where('status', 'active')->with('user.avatar')->get());
     }
 
     public function invitationCode(Group $group)
