@@ -2,48 +2,38 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\ApiResponses;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Api\V1\TransferOwnershipRequest;
+use App\Models\Group;
+use App\Models\Membership;
 use Illuminate\Http\Request;
 
 class OwnerController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    use ApiResponses;
+
+    public function eligilbeUsers(Group $group)
     {
-        //
+        $elgibleUsers = $group->members()->where('status', 'active')->where('role', '!=', 'owner')->with('user.avatar')->get();
+
+        return $this->successResponse($elgibleUsers); // focus on membership ids to send them
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function transferOwnership(Group $group, TransferOwnershipRequest $request)
     {
-        //
-    }
+        $user = $request->user();
+        $oldOwnerMembership = $group->members()->where('user_id', $user->id)->firstOrFail();
+        $newOwnerMembership = Membership::findOrFail($request->membership_id);
+        if ($newOwnerMembership->status != 'active') {
+            return $this->errorResponse('member is inactive', 403);
+        }
+        if ($newOwnerMembership->group_id != $group->id) {
+            return $this->errorResponse('user not from this group', 403);
+        }
+        $oldOwnerMembership->update(['role' => 'member']);
+        $newOwnerMembership->update(['role' => 'owner']);
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        return $this->noContentResponse();
     }
 }

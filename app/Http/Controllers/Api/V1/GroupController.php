@@ -189,4 +189,12 @@ class GroupController extends Controller
 
         return $this->successResponse($owes);
     }
+
+    public function changeSettings(Group $group, Request $request)
+    {
+        $validate = $request->validate(['settle' => 'in:0,1|integer']);
+        $group->update(['settle' => $validate['settle']]);
+
+        return $this->successResponse($group);
+    }
 }

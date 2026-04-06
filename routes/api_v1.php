@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\V1\GroupController;
 use App\Http\Controllers\Api\V1\InvitationController;
 use App\Http\Controllers\Api\V1\MembershipController;
 use App\Http\Controllers\Api\V1\MessageController;
+use App\Http\Controllers\Api\V1\OwnerController;
 use App\Http\Controllers\Api\V1\PaymentController;
 use App\Http\Controllers\Api\V1\ProfileController;
 
@@ -34,6 +35,11 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::patch('/groups/{group}/invitations/{invitation}/cancel', [InvitationController::class, 'cancelInvitation']);
         // members
         Route::patch('/groups/{group}/members/{membership}/kick', [MembershipController::class, 'kick']);
+        // ownership
+        Route::get('/groups/{group}/eligible-users', [OwnerController::class, 'eligilbeUsers']);
+        Route::patch('/groups/{group}/transfer-ownership', [OwnerController::class, 'transferOwnership']);
+        // settings
+        Route::patch('/groups/{group}/settings', [GroupController::class, 'changeSettings']);
     });
 
     // ===================//Member or Owner//=======================//
@@ -50,10 +56,12 @@ Route::middleware('auth:sanctum')->group(function () {
         // Expense:
         Route::get('/groups/{group}/expenses', [ExpenseController::class, 'index']);
         Route::post('/groups/{group}/expenses', [ExpenseController::class, 'store']);
-        Route::get('/expenses/{id}', [ExpenseController::class, 'show']);
-        Route::delete('/expenses/{id}', [ExpenseController::class, 'destroy']);
 
     });
+
+    // Expense (no group param):
+    Route::get('/expenses/{id}', [ExpenseController::class, 'show']);
+    Route::delete('/expenses/{id}', [ExpenseController::class, 'destroy']);
        // invitation
     Route::post('/groups/join/{code}', [InvitationController::class, 'joinGroupByCode']);
     Route::post('/invitations/{token}/accept', [InvitationController::class, 'joinByInvitation']);

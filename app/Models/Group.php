@@ -16,10 +16,10 @@ class Group extends Model
         'description',
         'invitation_code',
         'status',
+        'settle',
     ];
 
-    // generate code
-
+    // generate invitacode
     public function generateCodeInvitation(): void
     {
         do {
