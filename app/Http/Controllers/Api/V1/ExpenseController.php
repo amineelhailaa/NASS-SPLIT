@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\ApiResponses;
+use App\Exports\ExpensesExport;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\ExpenseFormRequest;
 use App\Models\Expense;
@@ -11,6 +12,7 @@ use App\Models\Split;
 use App\Services\StrategyManagerService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ExpenseController extends Controller
 {
@@ -22,6 +24,9 @@ class ExpenseController extends Controller
     public function index(Request $request, Group $group)
     {
         Gate::authorize('member', $group);
+        if ($request->query('export')) { // export=1
+            return Excel::download(new ExpensesExport($group), 'expenses.xlsx');
+        }
 
         return $this->successResponse($group->expenses()
             ->with(['payer.user', 'category', 'attachments'])
