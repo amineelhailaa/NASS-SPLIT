@@ -68,9 +68,8 @@ class MessageController extends Controller
     public function destroy(Message $message, Request $request)
     {
         if ($message->user_id !== $request->user()->id) {
-            abort(403);
+            return $this->errorResponse('You are not allowed to delete this message', 403);
         }
-        $user = $request->user();
         $message->delete();
 
         return $this->noContentResponse();

@@ -19,8 +19,9 @@ class ConversationController extends Controller
         $user = $request->user();
         $conversations = $user->conversations()
             ->with('lastMessage.user')
-            ->withMax('messages', 'created_at')->orderByDesc('messages_max_created_at')
-            ->get();
+            ->withMax('messages', 'created_at')
+            ->orderByDesc('messages_max_created_at')
+            ->paginate(20);
 
         return $this->successResponse($conversations);
     }
@@ -40,8 +41,9 @@ class ConversationController extends Controller
             ->where('conversations.id', $conversation->id)
             ->with([
                 'group',
-                'messages.user' => function ($query) {
+                'messages' => function ($query) {
                     $query->latest('created_at');
+                    $query->with('user');
                 },
             ])->firstOrFail();
 
