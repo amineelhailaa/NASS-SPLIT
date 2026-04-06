@@ -30,7 +30,7 @@ class ExpenseController extends Controller
 
         return $this->successResponse(
             $group->expenses()
-                ->with(['payer.user', 'category', 'attachments'])
+                ->with(['payer.user', 'category', 'attachments', 'splits.debtor.user'])
                 ->latest('date')
                 ->latest('id')
                 ->paginate(10)
