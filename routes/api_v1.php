@@ -12,7 +12,7 @@ use App\Http\Controllers\Api\V1\OwnerController;
 use App\Http\Controllers\Api\V1\PaymentController;
 use App\Http\Controllers\Api\V1\ProfileController;
 
-Route::middleware('auth:sanctum')->group(function () {
+Route::middleware(['auth:sanctum', 'notBanned'])->group(function () {
 
     // ===================//Admin//=======================//
     Route::middleware('can:admin')->group(function () {
@@ -30,7 +30,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::middleware('can:owner,group')->group(function () {
         // invitation:
         Route::post('/groups/{group}/invite', [InvitationController::class, 'inviteEmail']);
-        Route::get('/groups/{group}/invitation-code', [GroupController::class, 'invitationCode']);
+        Route::get('/groups/{group}/invitation-code', [GroupController::class, 'invitationCode'])->middleware('throttle:5,1');
         Route::get('/groups/{group}/invitations/pending', [InvitationController::class, 'pendingInvitations']);
         Route::patch('/groups/{group}/invitations/{invitation}/cancel', [InvitationController::class, 'cancelInvitation']);
         // members
@@ -52,6 +52,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/groups/{group}/members', [GroupController::class, 'members']);
         Route::get('/groups/{group}/balance', [GroupController::class, 'myBalance']);
         Route::get('/groups/{group}/owes', [GroupController::class, 'owes']);
+        Route::patch('/groups/{group}/leave', [MembershipController::class, 'leave']);
 
         // Expense:
         Route::get('/groups/{group}/expenses', [ExpenseController::class, 'index']);
@@ -62,7 +63,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // Expense (no group param):
     Route::get('/expenses/{id}', [ExpenseController::class, 'show']);
     Route::delete('/expenses/{id}', [ExpenseController::class, 'destroy']);
-       // invitation
+    // invitation
     Route::post('/groups/join/{code}', [InvitationController::class, 'joinGroupByCode']);
     Route::post('/invitations/{token}/accept', [InvitationController::class, 'joinByInvitation']);
     Route::post('/invitations/{token}/decline', [InvitationController::class, 'declineInvitation']);
@@ -75,7 +76,6 @@ Route::middleware('auth:sanctum')->group(function () {
     // Group:
     Route::get('/groups', [GroupController::class, 'index']);
     Route::post('/groups', [GroupController::class, 'store']);
-
 
     // Pyament:
     Route::get('/payments', [PaymentController::class, 'index']);
