@@ -88,7 +88,7 @@ class GroupController extends Controller
         if ($request->hasFile('avatar')) {
             $file = $request->file('avatar');
             $path = $file->store('avatars', 'public');
-            $group->avatar()->update([
+            $group->avatar()->updateOrCreate([], [
                 'path' => $path,
                 'file_name' => $file->getClientOriginalName(),
                 'file_type' => $file->isImage() ? 'image' : 'file',
@@ -114,7 +114,12 @@ class GroupController extends Controller
         Gate::authorize('member', $group);
 
         // return ids to apply membership controller methods
-        return $this->successResponse($group->members()->where('status', 'active')->with('user.avatar')->get());
+        return $this->successResponse(
+            $group->members()
+                ->where('status', 'active')
+                ->with('user.avatar')
+                ->paginate(10)
+        );
     }
 
     public function invitationCode(Group $group)
@@ -192,8 +197,10 @@ class GroupController extends Controller
 
     public function changeSettings(Group $group, Request $request)
     {
-        $validate = $request->validate(['settle' => 'in:0,1|integer']);
-        $group->update(['settle' => $validate['settle']]);
+        $validated = $request->validate([
+            'settle' => ['required', 'boolean'],
+        ]);
+        $group->update(['settle' => $validated['settle']]);
 
         return $this->successResponse($group);
     }
