@@ -31,6 +31,15 @@ class MembershipController extends Controller
             return $this->errorResponse('Member is already inactive', 422);
         }
 
+        $splitsAsCreditor = $membership->splitsAsCreditor()->sum('amount');
+        $splitsAsDebtor = $membership->splitsAsDebtor()->sum('amount');
+        $paymentsReceived = $membership->paymentsAsCreditor()->sum('amount');
+        $paymentsMade = $membership->paymentsAsDebtor()->sum('amount');
+        $totalCredits = $splitsAsCreditor + $paymentsMade;
+        $totalDebits = $splitsAsDebtor + $paymentsReceived;
+        $netBalances = ($totalCredits - $totalDebits);
+        if()
+
         $this->membershipService->deactivateMembership($membership);
 
         return $this->successResponse(null, 'Member kicked');

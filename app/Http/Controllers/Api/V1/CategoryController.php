@@ -17,7 +17,7 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        return $this->successResponse(Category::all());
+        return $this->successResponse(Category::paginate(10));
     }
 
     /**

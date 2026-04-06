@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\CheckIfBanned;
 use App\Http\Middleware\EnsureEmailIsVerified;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -27,6 +28,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->alias([
             'verified' => EnsureEmailIsVerified::class,
+            'notBanned' => CheckIfBanned::class,
         ]);
 
         //

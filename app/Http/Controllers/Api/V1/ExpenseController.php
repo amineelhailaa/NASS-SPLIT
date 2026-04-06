@@ -76,7 +76,7 @@ class ExpenseController extends Controller
         $expense = Expense::find($id);
         Gate::authorize('member', $expense->group);
 
-        return $this->successResponse($expense->with(
+        return $this->successResponse($expense->load(
             [
                 'splits.debtor',
                 'payer.user',

@@ -10,7 +10,7 @@ class UpdateProfileRequest extends FormRequest
     {
         return [
             'name' => 'sometimes|string|max:255',
-            'avatar' => 'sometimes|image|max:2028',
+            'avatar' => 'sometimes|image|max:2024',
         ];
     }
 
