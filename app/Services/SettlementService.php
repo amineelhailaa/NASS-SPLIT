@@ -17,20 +17,25 @@ class SettlementService
 
     public function memberBalance(Membership $membership): float
     {
-        $totalCredits = $membership->splitsAsCreditor()->sum('amount')
-            + $membership->paymentsAsDebtor()->sum('amount');
+        return $this->memberBalanceInCents($membership) / 100;
+    }
 
-        $totalDebits = $membership->splitsAsDebtor()->sum('amount')
-            + $membership->paymentsAsCreditor()->sum('amount');
+    public function memberBalanceInCents(Membership $membership): int
+    {
+        $totalCreditsCents = $this->toCents($membership->splitsAsCreditor()->sum('amount'))
+            + $this->toCents($membership->paymentsAsDebtor()->sum('amount'));
 
-        return $totalCredits - $totalDebits;
+        $totalDebitsCents = $this->toCents($membership->splitsAsDebtor()->sum('amount'))
+            + $this->toCents($membership->paymentsAsCreditor()->sum('amount'));
+
+        return $totalCreditsCents - $totalDebitsCents;
     }
 
     public function forGroup(Group $group): array
     {
         $netBalances = [];
         foreach ($group->members()->get() as $member) {
-            $netBalances[$member->id] = round($this->memberBalance($member) * 100);
+            $netBalances[$member->id] = $this->memberBalanceInCents($member);
         }
 
         return $this->buildTransactions($netBalances);
@@ -90,5 +95,10 @@ class SettlementService
         }
 
         return $transactions;
+    }
+
+    private function toCents($value): int
+    {
+        return (int) round(((float) $value) * 100);
     }
 }

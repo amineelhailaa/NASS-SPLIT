@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
 
 trait ApiResponses
 {
@@ -29,8 +30,9 @@ trait ApiResponses
         return $this->successResponse($data, $message, 201);
     }
 
-    protected function noContentResponse(): JsonResponse
+    protected function noContentResponse(): Response
     {
-        return response()->json(null, 204);
+        //        return response()->json(null, 204);
+        return response()->noContent();
     }
 }

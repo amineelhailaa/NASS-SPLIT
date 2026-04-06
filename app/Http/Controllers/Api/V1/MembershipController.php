@@ -36,8 +36,8 @@ class MembershipController extends Controller
             return $this->errorResponse('Member is already inactive', 422);
         }
 
-        $netBalance = $this->settlementService->memberBalance($membership);
-        if ($netBalance != 0 && $group->settle) {
+        $netBalanceCents = $this->settlementService->memberBalanceInCents($membership);
+        if ($netBalanceCents !== 0 && $group->settle) {
             return $this->errorResponse('settle rule: Member has unsettled balance ', 422);
         }
 
@@ -62,8 +62,8 @@ class MembershipController extends Controller
             return $this->errorResponse('Owner cannot leave before transferring ownership', 422);
         }
 
-        $netBalance = $this->settlementService->memberBalance($membership);
-        if ($netBalance != 0 && $group->settle) {
+        $netBalanceCents = $this->settlementService->memberBalanceInCents($membership);
+        if ($netBalanceCents !== 0 && $group->settle) {
             return $this->errorResponse('Settle rule: member has unsettled balance', 422);
         }
 
