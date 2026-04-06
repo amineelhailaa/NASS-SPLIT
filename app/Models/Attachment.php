@@ -14,10 +14,7 @@ class Attachment extends Model
         'path',
     ];
 
-    public function expense(): BelongsTo
-    {
-        return $this->belongsTo(Expense::class);
-    }
+
 
     public function attachable(): MorphTo
     {

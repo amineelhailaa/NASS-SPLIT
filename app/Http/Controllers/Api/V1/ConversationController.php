@@ -40,7 +40,7 @@ class ConversationController extends Controller
             ->where('conversations.id', $conversation->id)
             ->with([
                 'group',
-                'messages' => function ($query) {
+                'messages.user' => function ($query) {
                     $query->latest('created_at');
                 },
             ])->firstOrFail();

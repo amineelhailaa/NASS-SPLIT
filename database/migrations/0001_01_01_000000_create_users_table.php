@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('avatar')->nullable();
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
+            $table->string('password')->nullable();
             $table->string('provider_name')->nullable(); // socialite
             $table->string('provider_id')->nullable();
             $table->boolean('ban')->default(false);

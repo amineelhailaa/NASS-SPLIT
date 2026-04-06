@@ -30,8 +30,8 @@ class MessageController extends Controller
     public function store(MessageRequest $request, Conversation $conversation)
     {
         $user = $request->user();
-        if ($user->conversations()->whereKey($conversation->id)->exists()) {
-            return $this->errorResponse('you cant send messages here', 403);
+        if (! $user->conversations()->whereKey($conversation->id)->exists()) {
+            return $this->errorResponse('you cant send messages here, its not you conversation', 403);
         }
 
         $message = $conversation->messages()->create([

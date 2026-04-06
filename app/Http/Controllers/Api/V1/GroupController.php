@@ -106,7 +106,7 @@ class GroupController extends Controller
         Gate::authorize('owner', [$group]);
         $group->delete();
 
-        return $this->successResponse([], 'group deleted');
+        return $this->noContentResponse();
     }
 
     public function members(Group $group)

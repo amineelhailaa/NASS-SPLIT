@@ -17,7 +17,6 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
             $table->enum('role', ['owner', 'member'])->default('member');
             $table->timestamp('left_at')->nullable();
-            $table->decimal('balance', 12, 2)->default(0);
             $table->enum('status', ['active', 'inactive'])->default('active');
             $table->timestamps();
 

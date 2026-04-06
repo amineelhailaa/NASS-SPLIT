@@ -78,7 +78,7 @@ class ExpenseController extends Controller
      */
     public function show(string $id)
     {
-        $expense = Expense::find($id);
+        $expense = Expense::findOrFail($id);
         Gate::authorize('member', $expense->group);
 
         return $this->successResponse($expense->load(
@@ -104,7 +104,7 @@ class ExpenseController extends Controller
      */
     public function destroy(string $id)
     {
-        $expense = Expense::find($id);
+        $expense = Expense::findOrFail($id);
         Gate::authorize('owner', $expense->group);
         $expense->delete();
 
