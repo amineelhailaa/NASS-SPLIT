@@ -12,9 +12,10 @@ class FixedSplit implements SplitStrategy
 
         $result = [];
         foreach ($participants as $id => $p) {
+            $cents = round(((float) $p['amount']) * 100); // typecast
             $result[] = [
                 'debtor_id' => $p['membership_id'],
-                'amount' => round($p['amount']),
+                'amount' => $cents / 100,
             ];
         }
 

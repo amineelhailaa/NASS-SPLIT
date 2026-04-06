@@ -28,9 +28,12 @@ class ExpenseController extends Controller
             return Excel::download(new ExpensesExport($group), 'expenses.xlsx');
         }
 
-        return $this->successResponse($group->expenses()
-            ->with(['payer.user', 'category', 'attachments'])
-            ->get()
+        return $this->successResponse(
+            $group->expenses()
+                ->with(['payer.user', 'category', 'attachments'])
+                ->latest('date')
+                ->latest('id')
+                ->paginate(10)
         );
     }
 
