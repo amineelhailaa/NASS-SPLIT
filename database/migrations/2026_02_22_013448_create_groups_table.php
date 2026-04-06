@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('description')->nullable();
             $table->string('invitation_code')->unique()->nullable();
             $table->enum('status', ['active', 'inactive'])->default('active');
+            $table->boolean('settle')->default(1);
             $table->timestamps();
         });
     }

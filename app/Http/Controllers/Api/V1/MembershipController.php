@@ -7,13 +7,17 @@ use App\Http\Controllers\Controller;
 use App\Models\Group;
 use App\Models\Membership;
 use App\Services\MembershipService;
+use App\Services\SettlementService;
 use Illuminate\Support\Facades\Gate;
 
 class MembershipController extends Controller
 {
     use ApiResponses;
 
-    public function __construct(private MembershipService $membershipService) {}
+    public function __construct(
+        private MembershipService $membershipService,
+        private SettlementService $settlementService
+    ) {}
 
     public function kick(Group $group, Membership $membership)
     {
@@ -31,14 +35,10 @@ class MembershipController extends Controller
             return $this->errorResponse('Member is already inactive', 422);
         }
 
-        $splitsAsCreditor = $membership->splitsAsCreditor()->sum('amount');
-        $splitsAsDebtor = $membership->splitsAsDebtor()->sum('amount');
-        $paymentsReceived = $membership->paymentsAsCreditor()->sum('amount');
-        $paymentsMade = $membership->paymentsAsDebtor()->sum('amount');
-        $totalCredits = $splitsAsCreditor + $paymentsMade;
-        $totalDebits = $splitsAsDebtor + $paymentsReceived;
-        $netBalances = ($totalCredits - $totalDebits);
-        if()
+        $netBalance = $this->settlementService->memberBalance($membership);
+        if ($netBalance != 0 && $group->settle) {
+            return $this->errorResponse('settle rule: Member has unsettled balance ', 422);
+        }
 
         $this->membershipService->deactivateMembership($membership);
 

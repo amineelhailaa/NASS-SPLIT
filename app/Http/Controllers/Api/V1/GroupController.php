@@ -165,12 +165,7 @@ class GroupController extends Controller
         $user = $request->user();
         $membership = $user->memberships()->where('group_id', $group->id)->firstOrFail();
 
-        $splitsAsCreditor = $membership->splitsAsCreditor()->sum('amount');
-        $splitsAsDebtor = $membership->splitsAsDebtor()->sum('amount');
-        $paymentsReceived = $membership->paymentsAsCreditor()->sum('amount');
-        $paymentsMade = $membership->paymentsAsDebtor()->sum('amount');
-
-        $balance = ($splitsAsCreditor + $paymentsMade) - ($splitsAsDebtor + $paymentsReceived);
+        $balance = $this->settlementService->memberBalance($membership);
 
         return $this->successResponse($balance);
     }

@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Group;
+use App\Models\Membership;
 
 class SettlementService
 {
@@ -14,20 +15,22 @@ class SettlementService
         //
     }
 
+    public function memberBalance(Membership $membership): float
+    {
+        $totalCredits = $membership->splitsAsCreditor()->sum('amount')
+            + $membership->paymentsAsDebtor()->sum('amount');
+
+        $totalDebits = $membership->splitsAsDebtor()->sum('amount')
+            + $membership->paymentsAsCreditor()->sum('amount');
+
+        return $totalCredits - $totalDebits;
+    }
+
     public function forGroup(Group $group): array
     {
-        $memberships = $group->members()->get();
         $netBalances = [];
-        foreach ($memberships as $member) {
-            $splitsAsCreditor = $member->splitsAsCreditor()->sum('amount');
-            $splitsAsDebtor = $member->splitsAsDebtor()->sum('amount');
-            $paymentsReceived = $member->paymentsAsCreditor()->sum('amount');
-            $paymentsMade = $member->paymentsAsDebtor()->sum('amount');
-
-            $totalCredits = $splitsAsCreditor + $paymentsMade;
-            $totalDebits = $splitsAsDebtor + $paymentsReceived;
-
-            $netBalances[$member->id] = round(($totalCredits - $totalDebits) * 100);
+        foreach ($group->members()->get() as $member) {
+            $netBalances[$member->id] = round($this->memberBalance($member) * 100);
         }
 
         return $this->buildTransactions($netBalances);
