@@ -9,9 +9,11 @@ use App\Http\Requests\Api\V1\ExpenseFormRequest;
 use App\Models\Expense;
 use App\Models\Group;
 use App\Models\Split;
+use App\Notifications\NewExpenseAddedNotification;
 use App\Services\StrategyManagerService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Notification;
 use Maatwebsite\Excel\Facades\Excel;
 
 class ExpenseController extends Controller
@@ -72,6 +74,10 @@ class ExpenseController extends Controller
             'updated_at' => $now,
         ], $splits);
         Split::insert($splits);
+
+        $expense->load('payer.user');
+        $otherUsers = $group->users()->whereNot('users.id', $user->id)->get();
+        Notification::send($otherUsers, new NewExpenseAddedNotification($expense));
 
         return $this->createdResponse($expense, 'created successfully');
     }

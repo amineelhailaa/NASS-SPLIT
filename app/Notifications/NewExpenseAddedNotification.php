@@ -2,26 +2,20 @@
 
 namespace App\Notifications;
 
-use App\Models\Message;
+use App\Models\Expense;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\BroadcastMessage;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class NewMessageSentNotification extends Notification
+class NewExpenseAddedNotification extends Notification
 {
     use Queueable;
-
-    public Message $message;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct(Message $message)
-    {
-        $this->message = $message;
-
-    }
+    public function __construct(public Expense $expense) {}
 
     /**
      * Get the notification's delivery channels.
@@ -35,14 +29,13 @@ class NewMessageSentNotification extends Notification
 
     private function payload(): array
     {
-        $sender = $this->message->user;
-        $group = $this->message->conversation->group;
+        $payer = $this->expense->payer->user;
 
         return [
-            'actor_name'   => $sender->name,
-            'actor_avatar' => $sender->avatar?->path,
-            'body'         => $sender->name . ' sent a message',
-            'link'         => '/groups/' . $group->id . '/conversations/' . $this->message->conversation_id,
+            'actor_name'   => $payer->name,
+            'actor_avatar' => $payer->avatar?->path,
+            'body'         => $payer->name . ' added "' . $this->expense->title . '" — ' . $this->expense->amount,
+            'link'         => '/groups/' . $this->expense->group_id . '/expenses/' . $this->expense->id,
         ];
     }
 
@@ -60,7 +53,7 @@ class NewMessageSentNotification extends Notification
      * Get the mail representation of the notification.
      */
     public function toMail(object $notifiable): MailMessage
-    { //error
+    {
         return (new MailMessage)
             ->line('The introduction to the notification.')
             ->action('Notification Action', url('/'))
