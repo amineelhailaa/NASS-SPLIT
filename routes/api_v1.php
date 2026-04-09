@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\V1\MessageController;
 use App\Http\Controllers\Api\V1\OwnerController;
 use App\Http\Controllers\Api\V1\PaymentController;
 use App\Http\Controllers\Api\V1\ProfileController;
+use App\Http\Controllers\Api\V1\UserController;
 
 Route::middleware(['auth:sanctum', 'notBanned'])->group(function () {
 
@@ -68,6 +69,9 @@ Route::middleware(['auth:sanctum', 'notBanned'])->group(function () {
     Route::post('/invitations/{token}/accept', [InvitationController::class, 'joinByInvitation']);
     Route::post('/invitations/{token}/decline', [InvitationController::class, 'declineInvitation']);
     Route::get('/invitations/{token}', [InvitationController::class, 'show']);
+
+    // user:
+    Route::get('/user', [UserController::class, 'me']);
 
     // profile:
     Route::get('/profile', [ProfileController::class, 'edit']);
