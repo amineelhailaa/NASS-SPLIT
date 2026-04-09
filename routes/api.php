@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Api\Auth\RegisteredUserController;
 use App\Http\Controllers\Api\Auth\SocialAuthController;
 use App\Http\Controllers\Api\Auth\VerifyEmailController;
+use App\Http\Controllers\Api\V1\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -26,6 +27,10 @@ Route::middleware('guest')->group(function () {
 
 // Authenticated
 Route::middleware('auth:sanctum')->group(function () {
+
+    // user:
+    Route::get('/user', [UserController::class, 'me']);
+
     Route::post('/logout', [AuthenticatedSessionController::class, 'destroy']);
     // Email verification
     Route::post('/email/verification-notification', [EmailVerificationNotificationController::class, 'store'])->middleware('throttle:6,1');
