@@ -38,8 +38,7 @@ class GroupController extends Controller
         // sort
         $sortBy = in_array($request->input('sort_by'), ['created_at', 'name']) ? $request->input('sort_by') : 'created_at';
         $sortType = $request->input('sort_dir') === 'asc' ? 'asc' : 'desc';
-        $groups = $query->orderBy('groups.'.$sortBy, $sortType)->paginate(9);
-
+        $groups = $query->with('avatar')->orderBy('groups.'.$sortBy, $sortType)->paginate(9);
         return $this->successResponse($groups);
     }
 

@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Support\Facades\Storage;
 
 class Attachment extends Model
 {
@@ -14,7 +15,12 @@ class Attachment extends Model
         'path',
     ];
 
+    protected $appends = ['url'];
 
+    public function getUrlAttribute(): string
+    {
+        return Storage::disk('public')->url($this->path);
+    }
 
     public function attachable(): MorphTo
     {
