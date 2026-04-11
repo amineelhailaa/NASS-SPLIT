@@ -22,10 +22,10 @@ class SettlementService
 
     public function memberBalanceInCents(Membership $membership): int
     {
-        $totalCreditsCents = $this->toCents($membership->splitsAsCreditor()->sum('amount'))
+        $totalCreditsCents = $this->toCents($membership->splitsAsCreditor()->sum('splits.amount'))
             + $this->toCents($membership->paymentsAsDebtor()->sum('amount'));
 
-        $totalDebitsCents = $this->toCents($membership->splitsAsDebtor()->sum('amount'))
+        $totalDebitsCents = $this->toCents($membership->splitsAsDebtor()->sum('splits.amount'))
             + $this->toCents($membership->paymentsAsCreditor()->sum('amount'));
 
         return $totalCreditsCents - $totalDebitsCents;
