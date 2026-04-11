@@ -153,9 +153,9 @@ class GroupController extends Controller
             ->get();
 
         $membership = $user->memberships()->where('group_id', $group->id)->firstOrFail();
-        $paidByMe = $membership->expensesPaid()->sum('amount');
-        $myShare = $membership->splitsAsDebtor()->sum('amount')
-            - $membership->splitsAsCreditor()->sum('amount');
+        $paidByMe = $membership->expensesPaid()->sum('expenses.amount');
+        $myShare = $membership->splitsAsDebtor()->sum('splits.amount')
+            - $membership->splitsAsCreditor()->sum('splits.amount');
 
         return $this->successResponse([
             'total_expenses' => $totalExpense,
