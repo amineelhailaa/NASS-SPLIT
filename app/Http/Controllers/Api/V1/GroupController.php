@@ -75,7 +75,7 @@ class GroupController extends Controller
     {
         Gate::authorize('member', $group);
 
-        return $this->successResponse($group);
+        return $this->successResponse($group->load('conversation', 'users'));
 
     }
 
@@ -191,6 +191,8 @@ class GroupController extends Controller
         }));
         $members = $group->members()->with('user.avatar')->get()->keyBy('id'); // make an assoc with ids inside
         $owes = array_map(fn ($owe) => [
+            'creditor_id' => $owe['creditor_id'],
+            'debtor_id'   => $owe['debtor_id'],
             'creditor' => $members[$owe['creditor_id']]->user,
             'debtor' => $members[$owe['debtor_id']]->user,
             'amount' => $owe['amount'],
