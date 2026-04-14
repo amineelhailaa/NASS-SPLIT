@@ -40,7 +40,7 @@ class NewMessageSentNotification extends Notification
 
         return [
             'actor_name'   => $sender->name,
-            'actor_avatar' => $sender->avatar?->path,
+            'actor_avatar' => $sender->avatar?->url,
             'body'         => $sender->name . ' sent a message',
             'link'         => '/groups/' . $group->id . '/conversations/' . $this->message->conversation_id,
         ];
