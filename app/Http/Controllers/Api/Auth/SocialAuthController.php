@@ -40,7 +40,7 @@ class SocialAuthController extends Controller
 
         request()->session()->regenerate();
 
-        return $this->redirect(config('app.frontend_url').'/home');
+        return redirect(config('app.frontend_url').'/groups');
 
     }
 }

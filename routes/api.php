@@ -22,7 +22,6 @@ Route::middleware('guest')->group(function () {
 
     // Social auth
     Route::get('/auth/{provider}/redirect', [SocialAuthController::class, 'redirectToProvider']);
-    Route::get('/auth/{provider}/callback', [SocialAuthController::class, 'handleCallback']);
 });
 
 // Authenticated
