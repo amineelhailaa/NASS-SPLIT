@@ -46,6 +46,7 @@ class ProfileController extends Controller
     public function edit(Request $request)
     {
         $user = $request->user();
+
         return $this->successResponse($user);
     }
 
@@ -55,7 +56,9 @@ class ProfileController extends Controller
     public function update(UpdateProfileRequest $request)
     {
         $user = $request->user();
-        $user->update($request->only(['name']));
+        $user->update([
+            'name' => $request->name,
+        ]);
         if ($request->hasFile('avatar')) {
             $file = $request->file('avatar');
             $path = $file->store('', 'public');
@@ -67,7 +70,7 @@ class ProfileController extends Controller
             ]);
         }
 
-        return $this->successResponse($user);
+        return $this->successResponse($user, 'updated');
     }
     /**
      * Remove the specified resource from storage.
