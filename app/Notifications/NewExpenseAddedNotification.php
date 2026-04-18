@@ -32,10 +32,10 @@ class NewExpenseAddedNotification extends Notification
         $payer = $this->expense->payer->user;
 
         return [
-            'actor_name'   => $payer->name,
+            'actor_name' => $payer->name,
             'actor_avatar' => $payer->avatar?->url,
-            'body'         => $payer->name . ' added "' . $this->expense->title . '" — ' . $this->expense->amount,
-            'link'         => '/groups/' . $this->expense->group_id . '/expenses/' . $this->expense->id,
+            'body' => $payer->name.' added "'.$this->expense->title.'" — '.$this->expense->amount,
+            'link' => '/groups/'.$this->expense->group_id.'/expenses/'.$this->expense->id,
         ];
     }
 
