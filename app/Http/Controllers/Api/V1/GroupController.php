@@ -71,12 +71,16 @@ class GroupController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Group $group)
+    public function show(Group $group, Request $request)
     {
         Gate::authorize('member', $group);
 
-        return $this->successResponse($group->load('conversation', 'users'));
+        $group->load('conversation', 'users');
+        $group->pivot = $group->members()
+            ->where('user_id', $request->user()->id)
+            ->first();
 
+        return $this->successResponse($group);
     }
 
     /**
@@ -143,14 +147,28 @@ class GroupController extends Controller
         $spendingByCategory = Expense::where('group_id', $group->id)
             ->select('category_id', DB::raw('SUM(amount) as total'))
             ->groupBy('category_id')
-            ->with('category:id,name')
+            ->with('category')
             ->get();
-        $dailySpending = Expense::where('group_id', $group->id)
-            ->select(DB::raw('DATE(date) as day'),
-                DB::raw('SUM(amount) as total'))
-            ->groupBy('day')
-            ->orderBy('day')
-            ->get();
+        $today = today();
+        $start = $today->copy()->subDays(29);
+
+        $Daily = Expense::where('group_id', $group->id)
+            ->whereBetween('date', [$start->toDateString(), $today->toDateString()])
+            ->selectRaw('date as day, SUM(amount) as total')
+            ->groupBy('date')
+            ->orderBy('date')
+            ->pluck('total', 'day');
+
+        $dailySpending = collect();
+
+        for ($i = 29; $i >= 0; $i--) {
+            $day = $today->copy()->subDays($i)->toDateString();
+
+            $dailySpending->push([
+                'day' => $day,
+                'total' => (float) ($Daily->get($day) ?? 0),
+            ]);
+        }
 
         $membership = $user->memberships()->where('group_id', $group->id)->firstOrFail();
         $paidByMe = $membership->expensesPaid()->sum('expenses.amount');
