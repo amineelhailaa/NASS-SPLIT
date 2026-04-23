@@ -8,11 +8,10 @@ use App\Http\Controllers\Api\V1\GroupController;
 use App\Http\Controllers\Api\V1\InvitationController;
 use App\Http\Controllers\Api\V1\MembershipController;
 use App\Http\Controllers\Api\V1\MessageController;
-use App\Http\Controllers\Api\V1\OwnerController;
 use App\Http\Controllers\Api\V1\NotificationController;
+use App\Http\Controllers\Api\V1\OwnerController;
 use App\Http\Controllers\Api\V1\PaymentController;
 use App\Http\Controllers\Api\V1\ProfileController;
-use App\Http\Controllers\Api\V1\UserController;
 
 Route::middleware(['auth:sanctum', 'notBanned'])->group(function () {
 
@@ -26,6 +25,17 @@ Route::middleware(['auth:sanctum', 'notBanned'])->group(function () {
         // users
         Route::patch('/users/{user}/ban', [AdminController::class, 'banUser']);
         Route::patch('/users/{user}/unban', [AdminController::class, 'unBanUser']);
+        Route::get('/users', [AdminController::class, 'users']);
+        // expenses
+        Route::get('/expenses/statistics', [ExpenseController::class,
+            'expenseStatistic']);
+
+        Route::get('/expenses/statistics', [ExpenseController::class,
+            'expenseStatistic']);
+        Route::get('/expenses/category-use', [CategoryController::class,
+            'categoryUse']);
+
+
     });
 
     // ===================//Owner//=======================//
@@ -70,7 +80,6 @@ Route::middleware(['auth:sanctum', 'notBanned'])->group(function () {
     Route::post('/invitations/{token}/accept', [InvitationController::class, 'joinByInvitation']);
     Route::post('/invitations/{token}/decline', [InvitationController::class, 'declineInvitation']);
     Route::get('/invitations/{token}', [InvitationController::class, 'show']);
-
 
     // profile:
     Route::get('/profile', [ProfileController::class, 'edit']);
