@@ -46,4 +46,18 @@ class AdminController extends Controller
         return $this->successResponse($user, 'user unbanned');
 
     }
+
+    public function users(Request $request)
+    {
+        Gate::authorize('admin');
+        $search = $request->query('search');
+        $users = User::query()
+            ->when($search, fn ($q) => $q->where('name', 'like',
+                "%{$search}%")
+                ->orWhere('email', 'like', "%{$search}%"))
+            ->orderByDesc('id')
+            ->paginate(15);
+
+        return $this->successResponse($users);
+    }
 }
