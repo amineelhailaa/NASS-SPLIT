@@ -39,7 +39,7 @@ class GroupController extends Controller
         $sortBy = in_array($request->input('sort_by'), ['created_at', 'name']) ? $request->input('sort_by') : 'created_at';
         $sortType = $request->input('sort_dir') === 'asc' ? 'asc' : 'desc';
         $groups = $query
-            ->with('avatar')
+            ->with('avatar', 'users')
             ->withCount(['members' => fn ($q) => $q->where('status', 'active')])
             ->orderBy('groups.'.$sortBy, $sortType)
             ->paginate(9);
@@ -158,12 +158,9 @@ class GroupController extends Controller
             ->groupBy('date')
             ->orderBy('date')
             ->pluck('total', 'day');
-
         $dailySpending = collect();
-
         for ($i = 29; $i >= 0; $i--) {
             $day = $today->copy()->subDays($i)->toDateString();
-
             $dailySpending->push([
                 'day' => $day,
                 'total' => (float) ($Daily->get($day) ?? 0),
