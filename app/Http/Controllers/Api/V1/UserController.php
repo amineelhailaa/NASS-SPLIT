@@ -12,9 +12,8 @@ class UserController extends Controller
 
     public function me(Request $request)
     {
-        return $this->successResponse($request->user());
+        return $this->successResponse($request->user()->load('admin')); // add with admin relation
     }
-
     /**
      * Display a listing of the resource.
      */
