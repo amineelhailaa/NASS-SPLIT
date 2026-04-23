@@ -119,4 +119,33 @@ class ExpenseController extends Controller
 
         return $this->noContentResponse();
     }
+
+    public function expenseStatistic(Request $request)
+    {
+        Gate::authorize('admin');
+
+        $today = today();
+        $start = $today->copy()->subDays(29);
+
+        $Daily = Expense::whereBetween('date', [$start->toDateString(), $today->toDateString()])
+            ->selectRaw('date as day, SUM(amount) as total')
+            ->groupBy('date')
+            ->orderBy('date')
+            ->pluck('total', 'day');
+
+        $dailySpending = collect();
+
+        for ($i = 29; $i >= 0; $i--) {
+            $day = $today->copy()->subDays($i)->toDateString();
+
+            $dailySpending->push([
+                'day' => $day,
+                'total' => (float) ($Daily->get($day) ?? 0),
+            ]);
+        }
+
+        return $this->successResponse([
+            'expensesSum' => Expense::sum('amount'),
+            'dailySpending' => $dailySpending]);
+    }
 }
