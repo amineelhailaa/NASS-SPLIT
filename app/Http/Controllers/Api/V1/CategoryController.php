@@ -6,6 +6,8 @@ use App\ApiResponses;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\CategoryFormRequest;
 use App\Models\Category;
+use App\Models\Expense;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 
 class CategoryController extends Controller
@@ -15,7 +17,7 @@ class CategoryController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         return $this->successResponse(Category::paginate(10));
     }
@@ -61,5 +63,14 @@ class CategoryController extends Controller
         Category::findOrFail($id)->delete();
 
         return $this->noContentResponse();
+    }
+
+    public function categoryUse(Request $request)
+    {
+        Gate::authorize('admin');
+        return Expense::selectRaw('categories.name as category, expenses.category_id, count(expenses.category_id) as total')
+            ->join('categories', 'expenses.category_id', '=', 'categories.id')
+            ->groupBy('expenses.category_id', 'categories.name')
+            ->get();
     }
 }
