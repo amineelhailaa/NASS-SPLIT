@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\V1\AdminController;
+use App\Http\Controllers\Api\V1\ContactMessageController;
 use App\Http\Controllers\Api\V1\CategoryController;
 use App\Http\Controllers\Api\V1\ConversationController;
 use App\Http\Controllers\Api\V1\ExpenseController;
@@ -35,6 +36,11 @@ Route::middleware(['auth:sanctum', 'notBanned'])->group(function () {
         Route::get('/expenses/category-use', [CategoryController::class,
             'categoryUse']);
 
+        // contact messages
+        Route::get('/contact-messages', [ContactMessageController::class, 'index']);
+        Route::get('/contact-messages/{contactMessage}', [ContactMessageController::class, 'show']);
+        Route::patch('/contact-messages/{contactMessage}/status', [ContactMessageController::class, 'updateStatus']);
+        Route::delete('/contact-messages/{contactMessage}', [ContactMessageController::class, 'destroy']);
 
     });
 
@@ -104,6 +110,9 @@ Route::middleware(['auth:sanctum', 'notBanned'])->group(function () {
 
     // categories
     Route::get('/categories', [CategoryController::class, 'index']);
+
+    // contact
+    Route::post('/contact-messages', [ContactMessageController::class, 'store'])->middleware('throttle:3,1');
 
     // notifications
     Route::get('/notifications', [NotificationController::class, 'index']);
