@@ -23,7 +23,7 @@ class CategoryFormRequest extends FormRequest
      */
     public function rules(): array
     {
-        //for updating and guaranting uniqueness just skip the actual one
+        // for updating and guaranting uniqueness just skip the actual one
         $category = $this->route('category');
         $categoryId = is_object($category) ? $category->id : $category;
 

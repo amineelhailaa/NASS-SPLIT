@@ -26,7 +26,6 @@ Route::middleware('guest')->group(function () {
 
 // Authenticated
 Route::middleware('auth:sanctum')->group(function () {
-
     // user:
     Route::get('/user', [UserController::class, 'me']);
 

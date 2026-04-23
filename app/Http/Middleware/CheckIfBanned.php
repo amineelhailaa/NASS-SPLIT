@@ -17,7 +17,7 @@ class CheckIfBanned
     {
         $user = $request->user();
 
-        if (! $user) { //not logged
+        if (! $user) { // not logged
             return $next($request);
         }
 
