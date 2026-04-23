@@ -28,7 +28,8 @@ class AdminController extends Controller
             return $this->errorResponse('user already banned', 403);
         }
         $user->update(['ban' => 1]);
-        $this->membershipService->deactivateAllMemberships($user);
+        $this->membershipService->deactivateAllMemberships($user); // delete memberships
+        $user->notifications()->delete();
 
         return $this->successResponse($user, 'user banned');
 
