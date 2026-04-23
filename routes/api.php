@@ -15,13 +15,13 @@ use Illuminate\Support\Facades\Route;
 
 // Guest
 Route::middleware('guest')->group(function () {
-    Route::post('/register', [RegisteredUserController::class, 'store']);
-    Route::post('/login', [AuthenticatedSessionController::class, 'store']);
-    Route::post('/forgot-password', [PasswordResetLinkController::class, 'store']);
-    Route::post('/reset-password', [NewPasswordController::class, 'store']);
+    Route::post('/register', [RegisteredUserController::class, 'store'])->middleware('throttle:5,1');
+    Route::post('/login', [AuthenticatedSessionController::class, 'store'])->middleware('throttle:5,1');
+    Route::post('/forgot-password', [PasswordResetLinkController::class, 'store'])->middleware('throttle:5,1');
+    Route::post('/reset-password', [NewPasswordController::class, 'store'])->middleware('throttle:3,1');
 
     // Social auth
-    Route::get('/auth/{provider}/redirect', [SocialAuthController::class, 'redirectToProvider']);
+    Route::get('/auth/{provider}/redirect', [SocialAuthController::class, 'redirectToProvider'])->middleware('throttle:10,1');
 });
 
 // Authenticated
