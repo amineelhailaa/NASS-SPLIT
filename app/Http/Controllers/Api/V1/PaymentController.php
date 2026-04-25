@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\ApiResponses;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\PaymentRequest;
+use App\Models\Group;
 use App\Models\Payment;
 use Illuminate\Http\Request;
 
@@ -15,14 +16,16 @@ class PaymentController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index(Request $request, Group $group)
     {
         $user = $request->user();
-        $membershipIds = $user->memberships()->pluck('id');
+        $membership = $group->members()->where('status', 'active')
+            ->where('user_id', $user->id)
+            ->firstOrFail();
         $payments = Payment::query()
-            ->where(function ($q) use ($membershipIds) {
-                $q->whereIn('creditor_id', $membershipIds)
-                    ->orWhereIn('debtor_id', $membershipIds);
+            ->where(function ($q) use ($membership) {
+                $q->where('creditor_id', $membership->id)
+                    ->orWhere('debtor_id', $membership->id);
             })
             ->with('debtor.user', 'creditor.user')
             ->paginate();
