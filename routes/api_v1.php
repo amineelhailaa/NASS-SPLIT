@@ -1,8 +1,8 @@
 <?php
 
 use App\Http\Controllers\Api\V1\AdminController;
-use App\Http\Controllers\Api\V1\ContactMessageController;
 use App\Http\Controllers\Api\V1\CategoryController;
+use App\Http\Controllers\Api\V1\ContactMessageController;
 use App\Http\Controllers\Api\V1\ConversationController;
 use App\Http\Controllers\Api\V1\ExpenseController;
 use App\Http\Controllers\Api\V1\GroupController;
@@ -112,7 +112,6 @@ Route::middleware(['auth:sanctum', 'notBanned'])->group(function () {
     Route::get('/categories', [CategoryController::class, 'index']);
 
     // contact
-    Route::post('/contact-messages', [ContactMessageController::class, 'store'])->middleware('throttle:3,1');
 
     // notifications
     Route::get('/notifications', [NotificationController::class, 'index']);
@@ -120,3 +119,6 @@ Route::middleware(['auth:sanctum', 'notBanned'])->group(function () {
     Route::patch('/notifications/{id}/read', [NotificationController::class, 'markAsRead']);
 
 });
+
+// contact
+Route::middleware('guest')->group(fn () => Route::post('/contact-messages', [ContactMessageController::class, 'store'])->middleware('throttle:3,1'));
