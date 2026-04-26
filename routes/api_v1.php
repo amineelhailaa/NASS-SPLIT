@@ -96,7 +96,7 @@ Route::middleware(['auth:sanctum', 'notBanned'])->group(function () {
     Route::post('/groups', [GroupController::class, 'store']);
 
     // Pyament:
-    Route::get('/payments', [PaymentController::class, 'index']);
+    Route::get('/payments/{group}', [PaymentController::class, 'index']);
     Route::post('/payments', [PaymentController::class, 'store']);
     Route::get('/payments/{id}', [PaymentController::class, 'show']);
 
