@@ -14,10 +14,14 @@ class UserSeeder extends Seeder
     {
         //
         User::factory(20)->create();
-        User::create(['name' => 'amineelhailaa',
-            'email' => 'amineelhailaa@gmail.com',
-            'email_verified_at' => now(),
-            'password' => 'asdfasdfasdf',
-            'remember_token' => 'asdfasdfasdfsadfsadf']);
+        User::firstOrCreate(
+            ['email' => 'amineelhailaa@gmail.com'],
+            [
+                'name' => 'amineelhailaa',
+                'email_verified_at' => now(),
+                'password' => 'asdfasdfasdf',
+                'remember_token' => 'asdfasdfasdfsadfsadf'
+            ]
+        );
     }
 }
